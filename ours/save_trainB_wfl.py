@@ -1,0 +1,145 @@
+import os
+import time
+import sys
+
+from ours.register_zyl_bone_mask_stage import print_tre
+from ours.case.wfl.CT_dataset import IntubationDataset
+from utils.generate_tube import get_tube_on_image
+
+sys.path.append('/home/zsr/project/diffpose/ours/cut')
+sys.path.append('/home/zsr/project/diffpose/ours')
+import cv2
+import torch
+import numpy as np
+import pydicom
+import nibabel as nib
+
+from cut.style_to_drr import *
+from utils.drr_bone import DRR as DRR_Bone
+from utils.drr import DRR
+from matplotlib import pyplot as plt
+# from diffpose.deepfluoro import get_random_offset
+from my_util2 import get_random_offset
+
+from ours.utils.CT_dataset import Transforms, toZeroOne
+from scipy.ndimage import zoom
+from diffpose.calibration import RigidTransform, convert
+device = torch.device("cuda:1")
+transformer = Transforms(256, radius=119)
+root = "/home/zsr/project/diffpose/ours/data/liwei/王凤兰/CT/WangFengLan/20240311144245/306"
+x_root = "/home/zsr/project/diffpose/ours/data/liwei/王凤兰/ERCP/FENGLAN^WANG^/20240313160330/1"
+# root = "/media/sda1/Data/ERCP/CT+X+MRCP/liwei/王凤兰/CT/WangFengLan/20240311144245/306"
+# x_root = "/media/sda1/Data/ERCP/CT+X+MRCP/liwei/王凤兰/ERCP/FENGLAN^WANG^/20240313160330/1"
+
+# specimen = DeepFluoroDataset(1)
+specimen = IntubationDataset(root, x_root, x_offset=20, z_offset=50, z_cut=30, z_cut_end=250, factors=[0.75, 0.75, 1])
+isocenter_pose = specimen.isocenter_pose.to(device)
+center_pose = specimen.center_pose.to(device)
+back_pose = specimen.back_pose.to(device)
+height = 256
+subsample = 512 / height
+delx = specimen.delx * subsample
+drr = DRR(
+    specimen.volume,
+    specimen.spacing,
+    specimen.sdr,
+    height,
+    delx,
+    reverse_x_axis=True,
+    patch_size=height // 2
+).to(device)
+gt_pose = specimen.get_manual_gt(0).to(device)
+gt_img = drr(None, None, None, pose=gt_pose, bone_attenuation_multiplier=3)
+gt_img = transformer(gt_img).to(device).to(torch.float32)
+
+img = drr(None, None, None, pose=isocenter_pose, bone_attenuation_multiplier=3)
+
+print("img " + str(img.min()))
+print("img " + str(img.max()))
+
+# img = (img - img.min()) / (img.max() - img.min())
+# img = 1 - img
+# img = -img
+img = transformer(img)
+plt.figure()
+plt.imshow(img.cpu().squeeze(), cmap="gray")
+plt.show()
+
+print("drr_max:" + str(img.max()))
+print("drr_min:" + str(img.min()))
+
+# for _ in range(40):
+#     offset = get_random_offset(4, device)
+#     pose = isocenter_pose.compose(back_pose).compose(offset).compose(center_pose)
+#     img = drr(None, None, None, pose=pose, bone_attenuation_multiplier=3)
+#     img = transformer(img).to(torch.float32)
+#     for im in img:
+#         plt.figure()
+#         plt.imshow(im.cpu().squeeze(), cmap='gray')
+#         plt.show()
+
+drr = DRR(
+    specimen.volume,
+    specimen.spacing,
+    specimen.sdr,
+    height,
+    delx,
+    reverse_x_axis=True,
+    patch_size=height // 2
+).to(device)
+
+i = 600
+j = 0
+gt_pose = specimen.get_manual_gt(0).to(device)
+# x = np.array([1.66, -0.9, -0.89, 193.7, 93.6, 113.6])
+# x = np.array([1.66, -0.93, -0.9, 217, 79, 109])
+x = np.array([1.59, -0.85, -0.99, 229, 79, 85])
+x = torch.tensor(x, dtype=torch.float32, device=device)
+rot = x[:3].unsqueeze(0)
+xyz = x[3:].unsqueeze(0)
+# pose = RigidTransform(rot, xyz, "euler_angles", "ZYX")
+# gt_pose = isocenter_pose.compose(back_pose).compose(pose).compose(center_pose)
+gt_pose = RigidTransform(rot, xyz, parameterization="so3_log_map")
+for _ in range(75):
+    offset = get_random_offset(4, device)
+    # pose = isocenter_pose.compose(offset)
+    pose = gt_pose.compose(back_pose).compose(offset).compose(center_pose)
+    start_time = time.time()
+    img = drr(None, None, None, pose=pose, bone_attenuation_multiplier=3)
+    # img_bone = drr_bone(None, None, None, pose=pose, bone_attenuation_multiplier=3)
+    print("batch4执行了：" + str(time.time() - start_time))
+    # img = transformer(img)
+    # img = get_tube_on_image(img, black=False)
+    img = transformer(img, reverse=True)
+    # img_bone = transformer(img_bone, reverse=False)
+    # img_bone = (img_bone - img_bone.min()) / (img_bone.max() - img_bone.min())
+    # img_bone[img_bone >= 0.01] = 1
+    # img_bone[img_bone < 0.01] = 0
+    # img = (img - img.min()) / (img.max() - img.min())
+    # img = 1 - img
+    # img = changer(img)
+
+    for im in img:
+        im = toZeroOne(im)
+        im = torch.pow(im, 1.3)
+        im_numpy = im.cpu().squeeze().numpy()
+        im_numpy = (im_numpy - im_numpy.min()) / (im_numpy.max() - im_numpy.min())
+        im_numpy = (im_numpy * 255).astype(np.uint8)
+        cv2.imwrite(f"drrStyle_iso2/trainB/drr_{i}.png", im_numpy)
+        # nib.save(nib.Nifti1Image(im_numpy, np.eye(4)), f"/media/sda1/PersonalFiles/yx/dataset/nnUNet_raw/Dataset001_BrainTumour/imagesTr/drr_{str(i).zfill(4)}_0000.nii.gz")
+        i += 1
+
+        # plt.figure()
+        # plt.imshow(im.cpu().squeeze(), cmap="gray")
+        # plt.show()
+
+    # for im in img_bone:
+    #     im_numpy = im.cpu().squeeze().numpy().astype(np.int8)
+    #     nib.save(nib.Nifti1Image(im_numpy, np.eye(4)), f"/media/sda1/PersonalFiles/yx/dataset/nnUNet_raw/Dataset001_BrainTumour/labelsTr/drr_{str(j).zfill(4)}.nii.gz")
+    #     j += 1
+
+        # plt.figure()
+        # plt.imshow(im.cpu().squeeze(), cmap="gray")
+        # plt.show()
+#
+# print("done")

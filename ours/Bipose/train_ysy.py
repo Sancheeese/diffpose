@@ -1,0 +1,368 @@
+import os
+import time
+
+import matplotlib.pyplot as plt
+import torch
+from exceptiongroup import catch
+
+from ours.Bipose.model import CSPConvNeXt
+from ours.Bipose.util import pose_to_so4
+from ours.utils.CT_dataset import toZeroOne
+from ours.utils.mask_data import MaskDataAugmentation
+# from cut.style_to_drr import StyleChanger
+from ours.utils.generate_tube import get_tube_on_image
+from ours.utils.drr import DRR
+from ours.utils.drr_bone import DRR as DRR_Bone
+from diffdrr.metrics import MultiscaleNormalizedCrossCorrelation2d
+# from ours.utils.metrics2 import MultiscaleNormalizedCrossCorrelation2d
+# from utils.metrics_mask_tube_add import MultiscaleNormalizedCrossCorrelation2d
+# from diffdrr.metrics import MultiscaleNormalizedCrossCorrelation2d
+from pytorch_transformers.optimization import WarmupCosineSchedule
+from timm.utils.agc import adaptive_clip_grad as adaptive_clip_grad_
+from tqdm import tqdm
+from diffpose.metrics import DoubleGeodesic, GeodesicSE3
+from ours.case.ysy.CT_dataset import IntubationDataset
+from ours.utils.CT_dataset import Transforms
+from ours.my_util2 import get_random_offset
+from ours.utils.enhance_transforms import Transforms as ETransforms
+import random
+import torch.nn.functional as F
+from ours.utils.CT_dataset_augment import Transforms as TransForms_augment
+
+
+def add_circle_mask(x, size=256, radius=120):
+    y_coord = torch.arange(size) - size // 2
+    x_coord = torch.arange(size) - size // 2
+    Y, X = torch.meshgrid(y_coord, x_coord, indexing='ij')
+    distance_sq = X ** 2 + Y ** 2  # 使用平方避免开根号
+    mask = (distance_sq <= radius ** 2).float().to(x.device)
+
+    return mask * x
+
+def load(height, device):
+    root = "/home/zsr/project/diffpose/ours/data/liwei/杨式瑜/CT/YangShiYu/20240315081250.536000/7"
+    x_root = "/home/zsr/project/diffpose/ours/data/liwei/杨式瑜/ERCP/SHIYU^YANG^/20240515170510/1"
+    # root = "/media/sda1/Data/ERCP/CT+X+MRCP/liwei/杨式瑜/CT/YangShiYu/20240315081250.536000/7"
+    # x_root = "/media/sda1/Data/ERCP/CT+X+MRCP/liwei/杨式瑜/ERCP/SHIYU^YANG^/20240515170510/1"
+    specimen = IntubationDataset(root, x_root, y_offset=50, z_offset=-50, z_cut=400, factors=[0.7, 1.25, 0.7])
+    isocenter_pose = specimen.isocenter_pose.to(device)
+
+    subsample = 512 / height
+    delx = specimen.delx * subsample
+    drr = DRR(
+        specimen.volume,
+        specimen.spacing,
+        specimen.sdr,
+        height,
+        delx,
+        reverse_x_axis=True,
+        patch_size=height // 2
+    ).to(device)
+
+    drr_bone = DRR_Bone(
+        specimen.volume,
+        specimen.spacing,
+        specimen.sdr,
+        height,
+        delx,
+        reverse_x_axis=True,
+        patch_size=height // 2,
+        bone_attenuation_multiplier=3
+    ).to(device)
+    transforms = Transforms(height, radius=119)
+
+    return specimen, isocenter_pose, transforms, drr, drr_bone
+
+
+def train(
+    model,
+    optimizer,
+    scheduler,
+    drr,
+    drr_bone,
+    transforms,
+    specimen,
+    isocenter_pose,
+    device,
+    batch_size,
+    n_epochs,
+    n_batches_per_epoch,
+    model_params,
+    start_epoch=0,
+    best_loss=torch.inf,
+    accumulate_step = 4
+):
+    # metric = MultiscaleNormalizedCrossCorrelation2d([None, 50], [0.5, 0.5], eps=1e-4, device=device)
+    # metric = MultiscaleNormalizedCrossCorrelation2d([None, 40, 11], [0.3, 0.4, 0.3], eps=1e-4, device=device)
+    # metric = MultiscaleNormalizedCrossCorrelation2d(eps=1e-4, device=device)
+    metric = MultiscaleNormalizedCrossCorrelation2d(eps=1e-4, patch_sizes=[None, 13], patch_weights=[0.5, 0.5])
+    geodesic = GeodesicSE3()
+    double = DoubleGeodesic(drr.detector.sdr)
+    contrast_distribution = torch.distributions.Uniform(0.5, 8.0)
+    # augmenter = MaskDataAugmentation("/home/zsr/project/diffpose/ours/tube")
+
+    # best_loss = torch.inf
+
+    model.train()
+    center_pose = specimen.center_pose.to(device)
+    back_pose = specimen.back_pose.to(device)
+    etransforms = ETransforms(256)
+    # style_change = StyleChanger(
+    #     "/home/zsr/project/contrastive-unpaired-translation/checkpoints/drr_style_solid_nec1/50_net_G.pth",
+    #     device=device,
+    #     resize=256)
+    transforms_aug = TransForms_augment(256)
+    for epoch in range(n_epochs + 1):
+        record_epoch = epoch + start_epoch
+        losses = []
+        for batch_idx in (itr := tqdm(range(n_batches_per_epoch), leave=False)):
+            # torch.cuda.empty_cache()  # 释放未使用的缓存
+            contrast = contrast_distribution.sample().item()
+            offset = get_random_offset(batch_size, device)
+            # pose = isocenter_pose.compose(offset)
+            pose = isocenter_pose.compose(back_pose).compose(offset).compose(center_pose)
+
+            img = drr(None, None, None, pose=pose, bone_attenuation_multiplier=contrast)
+            img = transforms(img).to(torch.float32)
+            # if random.random() < 0.7:
+            #     img, _ = augmenter.augment(img)
+            # img = transforms(img, reverse=False).to(torch.float32)
+
+            # for im in img_bone:
+            #     plt.figure()
+            #     plt.imshow(im.cpu().permute(1, 2, 0), cmap='gray')
+            #     plt.show()
+            # img_iso = drr(None, None, None, pose=isocenter_pose, bone_attenuation_multiplier=contrast)
+            # for im in img_iso:
+            #     plt.figure()
+            #     plt.imshow(im.cpu().permute(1, 2, 0), cmap='gray')
+            #     plt.show()
+            # for im in img:
+            #     plt.figure()
+            #     plt.imshow(im.cpu().permute(1, 2, 0), cmap='gray')
+            #     plt.show()
+
+            pred_offset = model(img)
+            pred_pose = isocenter_pose.compose(pred_offset)
+            pred_img = drr(None, None, None, pose=pred_pose).to(torch.float32)
+            pred_img = transforms(pred_img)
+            # for im in pred_img:
+            #     plt.figure()
+            #     plt.imshow(im.detach().cpu().permute(1, 2, 0), cmap='gray')
+            #     plt.show()
+
+            ncc = metric(pred_img, img)
+            log_geodesic = geodesic(pred_pose, pose)
+            geodesic_rot, geodesic_xyz, double_geodesic = double(pred_pose, pose)
+            so4_pred = pose_to_so4(pred_pose)
+            so4_gt = pose_to_so4(pose)
+            diff = so4_gt - so4_pred
+            so4_loss = torch.norm(diff, dim=[1, 2])
+
+            loss = 1 - ncc + 1e-2 * double_geodesic + so4_loss
+            if loss.isnan().any():
+                # print("Aaaaaaand we've crashed...")
+                # print(ncc)
+                # print(log_geodesic)
+                # print(geodesic_rot)
+                # print(geodesic_xyz)
+                # print(double_geodesic)
+                # print(pose.get_matrix())
+                # print(pred_pose.get_matrix())
+                # torch.save(
+                #     {
+                #         "model_state_dict": model.state_dict(),
+                #         "optimizer_state_dict": optimizer.state_dict(),
+                #         "scheduler_state_dict": scheduler.state_dict(),
+                #         "height": drr.detector.height,
+                #         "epoch": record_epoch,
+                #         "batch_size": batch_size,
+                #         "n_epochs": n_epochs,
+                #         "n_batches_per_epoch": n_batches_per_epoch,
+                #         "pose": pose.get_matrix().cpu(),
+                #         "pred_pose": pred_pose.get_matrix().cpu(),
+                #         "img": img.cpu(),
+                #         "pred_img": pred_img.cpu(),
+                #         **model_params,
+                #     },
+                #     f"checkpoints/ysy_crashed.ckpt",
+                # )
+                print("Nan loss")
+                continue
+                # raise Exception("sad...")
+
+            # optimizer.zero_grad()
+            # loss.mean().backward()
+            # adaptive_clip_grad_(model.parameters())
+            # optimizer.step()
+            # scheduler.step()
+
+            loss.mean().backward()
+            if (batch_idx + 1) % accumulate_step == 0:
+                adaptive_clip_grad_(model.parameters())
+                optimizer.step()
+                optimizer.zero_grad()
+
+            scheduler.step()
+
+            losses.append(loss.mean().item())
+
+            # Update progress bar
+            itr.set_description(f"Epoch [{epoch}/{n_epochs}]")
+            itr.set_postfix(
+                geodesic_rot=geodesic_rot.mean().item(),
+                geodesic_xyz=geodesic_xyz.mean().item(),
+                geodesic_dou=double_geodesic.mean().item(),
+                geodesic_se3=log_geodesic.mean().item(),
+                loss=loss.mean().item(),
+                ncc=ncc.mean().item(),
+            )
+
+            prev_pose = pose
+            prev_pred_pose = pred_pose
+
+        losses = torch.tensor(losses)
+        tqdm.write(f"Epoch {epoch + 1:04d} | Loss {losses.mean().item():.4f}")
+        if losses.mean() < best_loss and not losses.isnan().any():
+            best_loss = losses.mean().item()
+            torch.save(
+                {
+                    "model_state_dict": model.state_dict(),
+                    "optimizer_state_dict": optimizer.state_dict(),
+                    "scheduler_state_dict": scheduler.state_dict(),
+                    "height": drr.detector.height,
+                    "epoch": record_epoch,
+                    "loss": losses.mean().item(),
+                    "batch_size": batch_size,
+                    "n_epochs": n_epochs,
+                    "n_batches_per_epoch": n_batches_per_epoch,
+                    **model_params,
+                },
+                f"checkpoints/ysy_800_bi_best.ckpt",
+            )
+
+        # 保存上一个epoch
+        torch.save(
+            {
+                "model_state_dict": model.state_dict(),
+                "optimizer_state_dict": optimizer.state_dict(),
+                "scheduler_state_dict": scheduler.state_dict(),
+                "height": drr.detector.height,
+                "epoch": record_epoch,
+                "loss": losses.mean().item(),
+                "batch_size": batch_size,
+                "n_epochs": n_epochs,
+                "n_batches_per_epoch": n_batches_per_epoch,
+                **model_params,
+            },
+            f"checkpoints/ysy_bi_last.ckpt",
+        )
+
+        if record_epoch % 50 == 0:
+            torch.save(
+                {
+                    "model_state_dict": model.state_dict(),
+                    "optimizer_state_dict": optimizer.state_dict(),
+                    "scheduler_state_dict": scheduler.state_dict(),
+                    "height": drr.detector.height,
+                    "epoch": record_epoch,
+                    "loss": losses.mean().item(),
+                    "batch_size": batch_size,
+                    "n_epochs": n_epochs,
+                    "n_batches_per_epoch": n_batches_per_epoch,
+                    **model_params,
+                },
+                f"checkpoints/ysy_pi_epoch{record_epoch:03d}.ckpt",
+            )
+
+        if record_epoch > n_epochs: break
+
+
+def main(
+    height=256,
+    restart=None,
+    model_name="resnet18",
+    parameterization="se3_log_map",
+    convention=None,
+    lr=1e-3,
+    batch_size=8,
+    n_epochs=1000,
+    n_batches_per_epoch=100,
+    accumulate_step=4
+):
+    print("------")
+    print("start training")
+    print("------")
+
+    device = torch.device("cuda:0")
+    specimen, isocenter_pose, transforms, drr, drr_bone = load(height, device)
+
+    model_params = {
+        "model_name": model_name,
+        "parameterization": parameterization,
+        "convention": convention,
+        "norm_layer": "groupnorm",
+    }
+    model = CSPConvNeXt()
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    start_epoch = 0
+    best_loss = torch.inf
+    if restart is not None:
+        ckpt = torch.load(restart, map_location=device)
+        model.load_state_dict(ckpt["model_state_dict"])
+        optimizer.load_state_dict(ckpt["optimizer_state_dict"])
+        start_epoch = ckpt["epoch"]
+        best_loss = torch.load("checkpoints/ysy_800_bi_best.ckpt", map_location=device)["loss"]
+
+        for state in optimizer.state.values():
+            for k, v in state.items():
+                if isinstance(v, torch.Tensor):
+                    state[k] = v.to(device)
+
+    model = model.to(device)
+
+    scheduler = WarmupCosineSchedule(
+        optimizer,
+        5 * n_batches_per_epoch,
+        n_epochs * n_batches_per_epoch - 5 * n_batches_per_epoch,
+    )
+    if restart is not None: scheduler.load_state_dict(ckpt["scheduler_state_dict"])
+
+    train(
+        model,
+        optimizer,
+        scheduler,
+        drr,
+        drr_bone,
+        transforms,
+        specimen,
+        isocenter_pose,
+        device,
+        batch_size,
+        n_epochs,
+        n_batches_per_epoch,
+        model_params,
+        start_epoch,
+        best_loss,
+        accumulate_step
+    )
+
+if __name__ == "__main__":
+    # main(batch_size=4, n_batches_per_epoch=200, n_epochs=800, accumulate_step=1, lr=0.005)
+    main(batch_size=8, n_batches_per_epoch=100, n_epochs=1000, accumulate_step=1, lr=0.001)
+    while True:
+        try:
+            # main(batch_size=4, n_batches_per_epoch=200, n_epochs=800, accumulate_step=1, lr=0.005, restart="checkpoints/ysy_800_norm_bone_mask3_pa_best.ckpt")
+            main(batch_size=8, n_batches_per_epoch=100, n_epochs=1000, accumulate_step=1, lr=0.001, restart="checkpoints/ysy_bi_last.ckpt")
+            break
+        except torch.OutOfMemoryError:
+            print("\nCUDA Out of Memory! Retrying in 10 seconds...")
+            time.sleep(10)  # 等待 10 秒再重启
+            torch.cuda.empty_cache()  # 清空 GPU 缓存
+            continue
+        except torch.cuda.OutOfMemoryError:
+            print("\nCUDA Out of Memory! Retrying in 10 seconds...")
+            time.sleep(10)  # 等待 10 秒再重启
+            torch.cuda.empty_cache()  # 清空 GPU 缓存
+            continue
+

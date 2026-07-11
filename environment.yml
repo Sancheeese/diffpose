@@ -1,0 +1,20 @@
+name: diffpose
+channels:
+  - conda-forge
+  - pytorch
+  - nvidia
+dependencies:
+  - pip
+  - pytorch
+  - torchvision
+  - pip:
+    - diffdrr==0.3.9
+    - h5py
+    - scikit-image
+    - seaborn
+    - pytorch-transformers
+    - timm
+    - torchmetrics
+    - tqdm
+    - beartype
+    - jaxtyping
