@@ -169,7 +169,16 @@ ours/**/trainB/
 ours/**/testA/
 ours/**/testB/
 ours/abret/
-ours/case/*/
+ours/case/**/__pycache__/
+ours/case/**/checkpoints/
+ours/case/**/runs/
+ours/case/**/outcmaes/
+ours/case/**/*.log
+ours/case/**/*.out
+ours/case/**/*.png
+ours/case/**/*.jpg
+ours/case/**/*.jpeg
+ours/case/**/fid_*.json
 ours/wsreg/ret/
 ours/wsreg/nohup*.out
 ours/Bipose/ret/
