@@ -12,7 +12,6 @@ jobs:
         uses: mamba-org/setup-micromamba@v1
         with:
           environment-file: environment.yml
-          cache-environment: true
           post-cleanup: 'all'
 
       - name: Install nbdev
