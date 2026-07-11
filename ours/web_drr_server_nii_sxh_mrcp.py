@@ -1,4 +1,7 @@
-"""SXH MRCP 501 NIfTI DRR web server with native MRCP 006 bile duct overlay.
+"""SXH MRCP 501 NIfTI DRR web server.
+
+MRCP 501 is resampled to the CT 3 DRR grid and rendered with the standard
+``DRR`` class. This server shows MRCP DRR only (no bile duct overlay).
 
 Run from ``diffpose/ours`` or the project root:
     python diffpose/ours/web_drr_server_nii_sxh_mrcp.py

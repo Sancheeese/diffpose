@@ -1,0 +1,175 @@
+/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffpose/calibration.py:24: UserWarning: As of jaxtyping version 0.2.24, jaxtyping now prefers the syntax
+```
+from jaxtyping import jaxtyped
+# Use your favourite typechecker: usually one of the two lines below.
+from typeguard import typechecked as typechecker
+from beartype import beartype as typechecker
+
+@jaxtyped(typechecker=typechecker)
+def foo(...):
+```
+and the old double-decorator syntax
+```
+@jaxtyped
+@typechecker
+def foo(...):
+```
+should no longer be used. (It will continue to work as it did before, but the new approach will produce more readable error messages.)
+In particular note that `typechecker` must be passed via keyword argument; the following is not valid:
+```
+@jaxtyped(typechecker)
+def foo(...):
+```
+
+  def __init__(
+/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffpose/calibration.py:126: UserWarning: As of jaxtyping version 0.2.24, jaxtyping now prefers the syntax
+```
+from jaxtyping import jaxtyped
+# Use your favourite typechecker: usually one of the two lines below.
+from typeguard import typechecked as typechecker
+from beartype import beartype as typechecker
+
+@jaxtyped(typechecker=typechecker)
+def foo(...):
+```
+and the old double-decorator syntax
+```
+@jaxtyped
+@typechecker
+def foo(...):
+```
+should no longer be used. (It will continue to work as it did before, but the new approach will produce more readable error messages.)
+In particular note that `typechecker` must be passed via keyword argument; the following is not valid:
+```
+@jaxtyped(typechecker)
+def foo(...):
+```
+
+  def perspective_projection(
+/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffpose/metrics.py:88: UserWarning: As of jaxtyping version 0.2.24, jaxtyping now prefers the syntax
+```
+from jaxtyping import jaxtyped
+# Use your favourite typechecker: usually one of the two lines below.
+from typeguard import typechecked as typechecker
+from beartype import beartype as typechecker
+
+@jaxtyped(typechecker=typechecker)
+def foo(...):
+```
+and the old double-decorator syntax
+```
+@jaxtyped
+@typechecker
+def foo(...):
+```
+should no longer be used. (It will continue to work as it did before, but the new approach will produce more readable error messages.)
+In particular note that `typechecker` must be passed via keyword argument; the following is not valid:
+```
+@jaxtyped(typechecker)
+def foo(...):
+```
+
+  def forward(
+/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffpose/metrics.py:107: UserWarning: As of jaxtyping version 0.2.24, jaxtyping now prefers the syntax
+```
+from jaxtyping import jaxtyped
+# Use your favourite typechecker: usually one of the two lines below.
+from typeguard import typechecked as typechecker
+from beartype import beartype as typechecker
+
+@jaxtyped(typechecker=typechecker)
+def foo(...):
+```
+and the old double-decorator syntax
+```
+@jaxtyped
+@typechecker
+def foo(...):
+```
+should no longer be used. (It will continue to work as it did before, but the new approach will produce more readable error messages.)
+In particular note that `typechecker` must be passed via keyword argument; the following is not valid:
+```
+@jaxtyped(typechecker)
+def foo(...):
+```
+
+  def forward(
+/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffpose/metrics.py:125: UserWarning: As of jaxtyping version 0.2.24, jaxtyping now prefers the syntax
+```
+from jaxtyping import jaxtyped
+# Use your favourite typechecker: usually one of the two lines below.
+from typeguard import typechecked as typechecker
+from beartype import beartype as typechecker
+
+@jaxtyped(typechecker=typechecker)
+def foo(...):
+```
+and the old double-decorator syntax
+```
+@jaxtyped
+@typechecker
+def foo(...):
+```
+should no longer be used. (It will continue to work as it did before, but the new approach will produce more readable error messages.)
+In particular note that `typechecker` must be passed via keyword argument; the following is not valid:
+```
+@jaxtyped(typechecker)
+def foo(...):
+```
+
+  def forward(
+/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffpose/metrics.py:151: UserWarning: As of jaxtyping version 0.2.24, jaxtyping now prefers the syntax
+```
+from jaxtyping import jaxtyped
+# Use your favourite typechecker: usually one of the two lines below.
+from typeguard import typechecked as typechecker
+from beartype import beartype as typechecker
+
+@jaxtyped(typechecker=typechecker)
+def foo(...):
+```
+and the old double-decorator syntax
+```
+@jaxtyped
+@typechecker
+def foo(...):
+```
+should no longer be used. (It will continue to work as it did before, but the new approach will produce more readable error messages.)
+In particular note that `typechecker` must be passed via keyword argument; the following is not valid:
+```
+@jaxtyped(typechecker)
+def foo(...):
+```
+
+  def forward(self, pose_1: RigidTransform, pose_2: RigidTransform):
+  0%|          | 0/100 [00:00<?, ?it/s]                                       submitit ERROR (2024-11-29 22:24:12,380) - Submitted job triggered an exception
+Traceback (most recent call last):
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/submitit/core/_submit.py", line 11, in <module>
+    submitit_main()
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/submitit/core/submission.py", line 76, in submitit_main
+    process_job(args.folder)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/submitit/core/submission.py", line 69, in process_job
+    raise error
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/submitit/core/submission.py", line 55, in process_job
+    result = delayed.result()
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/submitit/core/utils.py", line 137, in result
+    self._result = self.function(*self.args, **self.kwargs)
+  File "/media/sda1/PersonalFiles/yx/project/diffpose/experiments/deepfluoro/train2.py", line 210, in main
+    train(
+  File "/media/sda1/PersonalFiles/yx/project/diffpose/experiments/deepfluoro/train2.py", line 72, in train
+    img = drr(None, None, None, pose=pose, bone_attenuation_multiplier=contrast)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffdrr/drr.py", line 137, in forward
+    img = siddon_raycast(source, target, self.density, self.spacing)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffdrr/siddon.py", line 19, in siddon_raycast
+    alphas, maxidx = _get_alphas(source, target, spacing, dims, eps)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffdrr/siddon.py", line 62, in _get_alphas
+    alphas = torch.sort(alphas, dim=-1).values
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1.60 GiB. GPU 0 has a total capacity of 23.69 GiB of which 5.25 MiB is free. Process 25426 has 11.59 GiB memory in use. Process 25467 has 3.41 GiB memory in use. Including non-PyTorch memory, this process has 3.12 GiB memory in use. Process 25508 has 1.30 GiB memory in use. Process 25590 has 2.66 GiB memory in use. Process 25549 has 1.59 GiB memory in use. Of the allocated memory 2.81 GiB is allocated by PyTorch, and 9.20 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)

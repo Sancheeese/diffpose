@@ -1,7 +1,9 @@
 """SXH MRCP NIfTI + X-ray dataset for DRR projection.
 
-Uses MRCP 501 as the projection volume (not CT). The bile duct overlay uses
-``mrcp_006`` in native MR space. Intensity is min-max normalized before DRR.
+MRCP 501 intensity is resampled onto the CT 3 grid (ICP), then min-max
+normalized and passed through the same DRR axis pipeline as sxh CT.
+``mr_mask`` (mrcp_006 bile duct on the CT grid) is loaded for optional
+``DRRSeg`` use; the current MRCP web server does not overlay it.
 """
 
 from __future__ import annotations

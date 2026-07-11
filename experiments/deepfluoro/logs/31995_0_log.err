@@ -1,0 +1,84 @@
+/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffpose/calibration.py:24: UserWarning: As of jaxtyping version 0.2.24, jaxtyping now prefers the syntax
+```
+from jaxtyping import jaxtyped
+# Use your favourite typechecker: usually one of the two lines below.
+from typeguard import typechecked as typechecker
+from beartype import beartype as typechecker
+
+@jaxtyped(typechecker=typechecker)
+def foo(...):
+```
+and the old double-decorator syntax
+```
+@jaxtyped
+@typechecker
+def foo(...):
+```
+should no longer be used. (It will continue to work as it did before, but the new approach will produce more readable error messages.)
+In particular note that `typechecker` must be passed via keyword argument; the following is not valid:
+```
+@jaxtyped(typechecker)
+def foo(...):
+```
+
+  def __init__(
+/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffpose/calibration.py:126: UserWarning: As of jaxtyping version 0.2.24, jaxtyping now prefers the syntax
+```
+from jaxtyping import jaxtyped
+# Use your favourite typechecker: usually one of the two lines below.
+from typeguard import typechecked as typechecker
+from beartype import beartype as typechecker
+
+@jaxtyped(typechecker=typechecker)
+def foo(...):
+```
+and the old double-decorator syntax
+```
+@jaxtyped
+@typechecker
+def foo(...):
+```
+should no longer be used. (It will continue to work as it did before, but the new approach will produce more readable error messages.)
+In particular note that `typechecker` must be passed via keyword argument; the following is not valid:
+```
+@jaxtyped(typechecker)
+def foo(...):
+```
+
+  def perspective_projection(
+Traceback (most recent call last):
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/submitit/core/_submit.py", line 11, in <module>
+    submitit_main()
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/submitit/core/submission.py", line 76, in submitit_main
+    process_job(args.folder)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/submitit/core/submission.py", line 52, in process_job
+    delayed = utils.DelayedSubmission.load(paths.submitted_pickle)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/submitit/core/utils.py", line 153, in load
+    obj = pickle_load(filepath)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/submitit/core/utils.py", line 232, in pickle_load
+    return pickle.load(ifile)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffpose/deepfluoro.py", line 289, in <module>
+    from torchvision.transforms.functional import center_crop, gaussian_blur
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/torchvision/__init__.py", line 10, in <module>
+    from torchvision import _meta_registrations, datasets, io, models, ops, transforms, utils  # usort:skip
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/torchvision/models/__init__.py", line 17, in <module>
+    from . import detection, optical_flow, quantization, segmentation, video
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/torchvision/models/video/__init__.py", line 1, in <module>
+    from .mvit import *
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/torchvision/models/video/mvit.py", line 28, in <module>
+    class MSBlockConfig:
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/dataclasses.py", line 1184, in dataclass
+    return wrap(cls)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/dataclasses.py", line 1175, in wrap
+    return _process_class(cls, init, repr, eq, order, unsafe_hash,
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/dataclasses.py", line 1024, in _process_class
+    _init_fn(all_init_fields,
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/dataclasses.py", line 579, in _init_fn
+    return _create_fn('__init__',
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/dataclasses.py", line 432, in _create_fn
+    exec(txt, globals, ns)
+KeyboardInterrupt

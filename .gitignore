@@ -158,6 +158,9 @@ ours/data/
 # Large DeepFluoro source dataset outside ours/data
 /data/ipcai_2020_full_res_data.h5
 
+# Local HDF5 experiment data exceeding GitHub's regular file limit
+/ours/sjj_data.h5
+
 # Medical images
 *.dcm
 *.dicom

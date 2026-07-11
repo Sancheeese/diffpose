@@ -1,0 +1,172 @@
+/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffpose/calibration.py:24: UserWarning: As of jaxtyping version 0.2.24, jaxtyping now prefers the syntax
+```
+from jaxtyping import jaxtyped
+# Use your favourite typechecker: usually one of the two lines below.
+from typeguard import typechecked as typechecker
+from beartype import beartype as typechecker
+
+@jaxtyped(typechecker=typechecker)
+def foo(...):
+```
+and the old double-decorator syntax
+```
+@jaxtyped
+@typechecker
+def foo(...):
+```
+should no longer be used. (It will continue to work as it did before, but the new approach will produce more readable error messages.)
+In particular note that `typechecker` must be passed via keyword argument; the following is not valid:
+```
+@jaxtyped(typechecker)
+def foo(...):
+```
+
+  def __init__(
+/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffpose/calibration.py:126: UserWarning: As of jaxtyping version 0.2.24, jaxtyping now prefers the syntax
+```
+from jaxtyping import jaxtyped
+# Use your favourite typechecker: usually one of the two lines below.
+from typeguard import typechecked as typechecker
+from beartype import beartype as typechecker
+
+@jaxtyped(typechecker=typechecker)
+def foo(...):
+```
+and the old double-decorator syntax
+```
+@jaxtyped
+@typechecker
+def foo(...):
+```
+should no longer be used. (It will continue to work as it did before, but the new approach will produce more readable error messages.)
+In particular note that `typechecker` must be passed via keyword argument; the following is not valid:
+```
+@jaxtyped(typechecker)
+def foo(...):
+```
+
+  def perspective_projection(
+/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffpose/metrics.py:88: UserWarning: As of jaxtyping version 0.2.24, jaxtyping now prefers the syntax
+```
+from jaxtyping import jaxtyped
+# Use your favourite typechecker: usually one of the two lines below.
+from typeguard import typechecked as typechecker
+from beartype import beartype as typechecker
+
+@jaxtyped(typechecker=typechecker)
+def foo(...):
+```
+and the old double-decorator syntax
+```
+@jaxtyped
+@typechecker
+def foo(...):
+```
+should no longer be used. (It will continue to work as it did before, but the new approach will produce more readable error messages.)
+In particular note that `typechecker` must be passed via keyword argument; the following is not valid:
+```
+@jaxtyped(typechecker)
+def foo(...):
+```
+
+  def forward(
+/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffpose/metrics.py:107: UserWarning: As of jaxtyping version 0.2.24, jaxtyping now prefers the syntax
+```
+from jaxtyping import jaxtyped
+# Use your favourite typechecker: usually one of the two lines below.
+from typeguard import typechecked as typechecker
+from beartype import beartype as typechecker
+
+@jaxtyped(typechecker=typechecker)
+def foo(...):
+```
+and the old double-decorator syntax
+```
+@jaxtyped
+@typechecker
+def foo(...):
+```
+should no longer be used. (It will continue to work as it did before, but the new approach will produce more readable error messages.)
+In particular note that `typechecker` must be passed via keyword argument; the following is not valid:
+```
+@jaxtyped(typechecker)
+def foo(...):
+```
+
+  def forward(
+/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffpose/metrics.py:125: UserWarning: As of jaxtyping version 0.2.24, jaxtyping now prefers the syntax
+```
+from jaxtyping import jaxtyped
+# Use your favourite typechecker: usually one of the two lines below.
+from typeguard import typechecked as typechecker
+from beartype import beartype as typechecker
+
+@jaxtyped(typechecker=typechecker)
+def foo(...):
+```
+and the old double-decorator syntax
+```
+@jaxtyped
+@typechecker
+def foo(...):
+```
+should no longer be used. (It will continue to work as it did before, but the new approach will produce more readable error messages.)
+In particular note that `typechecker` must be passed via keyword argument; the following is not valid:
+```
+@jaxtyped(typechecker)
+def foo(...):
+```
+
+  def forward(
+/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffpose/metrics.py:151: UserWarning: As of jaxtyping version 0.2.24, jaxtyping now prefers the syntax
+```
+from jaxtyping import jaxtyped
+# Use your favourite typechecker: usually one of the two lines below.
+from typeguard import typechecked as typechecker
+from beartype import beartype as typechecker
+
+@jaxtyped(typechecker=typechecker)
+def foo(...):
+```
+and the old double-decorator syntax
+```
+@jaxtyped
+@typechecker
+def foo(...):
+```
+should no longer be used. (It will continue to work as it did before, but the new approach will produce more readable error messages.)
+In particular note that `typechecker` must be passed via keyword argument; the following is not valid:
+```
+@jaxtyped(typechecker)
+def foo(...):
+```
+
+  def forward(self, pose_1: RigidTransform, pose_2: RigidTransform):
+  0%|          | 0/100 [00:00<?, ?it/s]Epoch [0/1000]:   0%|          | 0/100 [00:07<?, ?it/s]Epoch [0/1000]:   0%|          | 0/100 [00:07<?, ?it/s, geodesic_dou=395, geodesic_rot=211, geodesic_se3=335, geodesic_xyz=334, loss=8.33, ncc=-.0327]Epoch [0/1000]:   1%|          | 1/100 [00:07<11:37,  7.05s/it, geodesic_dou=395, geodesic_rot=211, geodesic_se3=335, geodesic_xyz=334, loss=8.33, ncc=-.0327]Epoch [0/1000]:   1%|          | 1/100 [00:09<11:37,  7.05s/it, geodesic_dou=395, geodesic_rot=211, geodesic_se3=335, geodesic_xyz=334, loss=8.33, ncc=-.0327]Epoch [0/1000]:   1%|          | 1/100 [00:09<11:37,  7.05s/it, geodesic_dou=531, geodesic_rot=228, geodesic_se3=483, geodesic_xyz=479, loss=10.8, ncc=0.33]  Epoch [0/1000]:   2%|▏         | 2/100 [00:09<07:14,  4.43s/it, geodesic_dou=531, geodesic_rot=228, geodesic_se3=483, geodesic_xyz=479, loss=10.8, ncc=0.33]Epoch [0/1000]:   2%|▏         | 2/100 [00:12<07:14,  4.43s/it, geodesic_dou=531, geodesic_rot=228, geodesic_se3=483, geodesic_xyz=479, loss=10.8, ncc=0.33]Epoch [0/1000]:   2%|▏         | 2/100 [00:12<07:14,  4.43s/it, geodesic_dou=700, geodesic_rot=580, geodesic_se3=415, geodesic_xyz=393, loss=12.5, ncc=-.35]Epoch [0/1000]:   3%|▎         | 3/100 [00:12<05:57,  3.68s/it, geodesic_dou=700, geodesic_rot=580, geodesic_se3=415, geodesic_xyz=393, loss=12.5, ncc=-.35]Epoch [0/1000]:   3%|▎         | 3/100 [00:15<05:57,  3.68s/it, geodesic_dou=700, geodesic_rot=580, geodesic_se3=415, geodesic_xyz=393, loss=12.5, ncc=-.35]Epoch [0/1000]:   3%|▎         | 3/100 [00:15<05:57,  3.68s/it, geodesic_dou=464, geodesic_rot=327, geodesic_se3=330, geodesic_xyz=329, loss=8.63, ncc=0.307]Epoch [0/1000]:   4%|▍         | 4/100 [00:15<05:16,  3.30s/it, geodesic_dou=464, geodesic_rot=327, geodesic_se3=330, geodesic_xyz=329, loss=8.63, ncc=0.307]Epoch [0/1000]:   4%|▍         | 4/100 [00:17<05:16,  3.30s/it, geodesic_dou=464, geodesic_rot=327, geodesic_se3=330, geodesic_xyz=329, loss=8.63, ncc=0.307]Epoch [0/1000]:   4%|▍         | 4/100 [00:17<05:16,  3.30s/it, geodesic_dou=247, geodesic_rot=186, geodesic_se3=163, geodesic_xyz=162, loss=5.36, ncc=-.262]Epoch [0/1000]:   5%|▌         | 5/100 [00:17<04:38,  2.94s/it, geodesic_dou=247, geodesic_rot=186, geodesic_se3=163, geodesic_xyz=162, loss=5.36, ncc=-.262]                                                                                                                                                             Traceback (most recent call last):
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/submitit/core/_submit.py", line 11, in <module>
+    submitit_main()
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/submitit/core/submission.py", line 76, in submitit_main
+    process_job(args.folder)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/submitit/core/submission.py", line 55, in process_job
+    result = delayed.result()
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/submitit/core/utils.py", line 137, in result
+    self._result = self.function(*self.args, **self.kwargs)
+  File "/media/sda1/PersonalFiles/yx/project/diffpose/experiments/deepfluoro/train2.py", line 207, in main
+    train(
+  File "/media/sda1/PersonalFiles/yx/project/diffpose/experiments/deepfluoro/train2.py", line 69, in train
+    img = drr(None, None, None, pose=pose, bone_attenuation_multiplier=contrast)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffdrr/drr.py", line 113, in forward
+    self.set_bone_attenuation_multiplier(bone_attenuation_multiplier)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffdrr/drr.py", line 146, in set_bone_attenuation_multiplier
+    self.density[self.bone] = self.volume[self.bone] * bone_attenuation_multiplier
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1918, in __getattr__
+    def __getattr__(self, name: str) -> Any:
+KeyboardInterrupt

@@ -1,0 +1,177 @@
+/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffpose/calibration.py:24: UserWarning: As of jaxtyping version 0.2.24, jaxtyping now prefers the syntax
+```
+from jaxtyping import jaxtyped
+# Use your favourite typechecker: usually one of the two lines below.
+from typeguard import typechecked as typechecker
+from beartype import beartype as typechecker
+
+@jaxtyped(typechecker=typechecker)
+def foo(...):
+```
+and the old double-decorator syntax
+```
+@jaxtyped
+@typechecker
+def foo(...):
+```
+should no longer be used. (It will continue to work as it did before, but the new approach will produce more readable error messages.)
+In particular note that `typechecker` must be passed via keyword argument; the following is not valid:
+```
+@jaxtyped(typechecker)
+def foo(...):
+```
+
+  def __init__(
+/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffpose/calibration.py:126: UserWarning: As of jaxtyping version 0.2.24, jaxtyping now prefers the syntax
+```
+from jaxtyping import jaxtyped
+# Use your favourite typechecker: usually one of the two lines below.
+from typeguard import typechecked as typechecker
+from beartype import beartype as typechecker
+
+@jaxtyped(typechecker=typechecker)
+def foo(...):
+```
+and the old double-decorator syntax
+```
+@jaxtyped
+@typechecker
+def foo(...):
+```
+should no longer be used. (It will continue to work as it did before, but the new approach will produce more readable error messages.)
+In particular note that `typechecker` must be passed via keyword argument; the following is not valid:
+```
+@jaxtyped(typechecker)
+def foo(...):
+```
+
+  def perspective_projection(
+/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffpose/metrics.py:88: UserWarning: As of jaxtyping version 0.2.24, jaxtyping now prefers the syntax
+```
+from jaxtyping import jaxtyped
+# Use your favourite typechecker: usually one of the two lines below.
+from typeguard import typechecked as typechecker
+from beartype import beartype as typechecker
+
+@jaxtyped(typechecker=typechecker)
+def foo(...):
+```
+and the old double-decorator syntax
+```
+@jaxtyped
+@typechecker
+def foo(...):
+```
+should no longer be used. (It will continue to work as it did before, but the new approach will produce more readable error messages.)
+In particular note that `typechecker` must be passed via keyword argument; the following is not valid:
+```
+@jaxtyped(typechecker)
+def foo(...):
+```
+
+  def forward(
+/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffpose/metrics.py:107: UserWarning: As of jaxtyping version 0.2.24, jaxtyping now prefers the syntax
+```
+from jaxtyping import jaxtyped
+# Use your favourite typechecker: usually one of the two lines below.
+from typeguard import typechecked as typechecker
+from beartype import beartype as typechecker
+
+@jaxtyped(typechecker=typechecker)
+def foo(...):
+```
+and the old double-decorator syntax
+```
+@jaxtyped
+@typechecker
+def foo(...):
+```
+should no longer be used. (It will continue to work as it did before, but the new approach will produce more readable error messages.)
+In particular note that `typechecker` must be passed via keyword argument; the following is not valid:
+```
+@jaxtyped(typechecker)
+def foo(...):
+```
+
+  def forward(
+/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffpose/metrics.py:125: UserWarning: As of jaxtyping version 0.2.24, jaxtyping now prefers the syntax
+```
+from jaxtyping import jaxtyped
+# Use your favourite typechecker: usually one of the two lines below.
+from typeguard import typechecked as typechecker
+from beartype import beartype as typechecker
+
+@jaxtyped(typechecker=typechecker)
+def foo(...):
+```
+and the old double-decorator syntax
+```
+@jaxtyped
+@typechecker
+def foo(...):
+```
+should no longer be used. (It will continue to work as it did before, but the new approach will produce more readable error messages.)
+In particular note that `typechecker` must be passed via keyword argument; the following is not valid:
+```
+@jaxtyped(typechecker)
+def foo(...):
+```
+
+  def forward(
+/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffpose/metrics.py:151: UserWarning: As of jaxtyping version 0.2.24, jaxtyping now prefers the syntax
+```
+from jaxtyping import jaxtyped
+# Use your favourite typechecker: usually one of the two lines below.
+from typeguard import typechecked as typechecker
+from beartype import beartype as typechecker
+
+@jaxtyped(typechecker=typechecker)
+def foo(...):
+```
+and the old double-decorator syntax
+```
+@jaxtyped
+@typechecker
+def foo(...):
+```
+should no longer be used. (It will continue to work as it did before, but the new approach will produce more readable error messages.)
+In particular note that `typechecker` must be passed via keyword argument; the following is not valid:
+```
+@jaxtyped(typechecker)
+def foo(...):
+```
+
+  def forward(self, pose_1: RigidTransform, pose_2: RigidTransform):
+  0%|          | 0/100 [00:00<?, ?it/s]Epoch [0/1000]:   0%|          | 0/100 [00:05<?, ?it/s]Epoch [0/1000]:   0%|          | 0/100 [00:06<?, ?it/s, geodesic_dou=470, geodesic_rot=250, geodesic_se3=401, geodesic_xyz=398, loss=9.98, ncc=-.27]Epoch [0/1000]:   1%|          | 1/100 [00:06<09:54,  6.00s/it, geodesic_dou=470, geodesic_rot=250, geodesic_se3=401, geodesic_xyz=398, loss=9.98, ncc=-.27]Epoch [0/1000]:   1%|          | 1/100 [00:08<09:54,  6.00s/it, geodesic_dou=470, geodesic_rot=250, geodesic_se3=401, geodesic_xyz=398, loss=9.98, ncc=-.27]Epoch [0/1000]:   1%|          | 1/100 [00:08<09:54,  6.00s/it, geodesic_dou=351, geodesic_rot=247, geodesic_se3=252, geodesic_xyz=250, loss=7.07, ncc=-.0408]Epoch [0/1000]:   2%|▏         | 2/100 [00:08<06:17,  3.85s/it, geodesic_dou=351, geodesic_rot=247, geodesic_se3=252, geodesic_xyz=250, loss=7.07, ncc=-.0408]Epoch [0/1000]:   2%|▏         | 2/100 [00:10<06:17,  3.85s/it, geodesic_dou=351, geodesic_rot=247, geodesic_se3=252, geodesic_xyz=250, loss=7.07, ncc=-.0408]Epoch [0/1000]:   2%|▏         | 2/100 [00:10<06:17,  3.85s/it, geodesic_dou=397, geodesic_rot=194, geodesic_se3=347, geodesic_xyz=346, loss=8.52, ncc=-.0769]Epoch [0/1000]:   3%|▎         | 3/100 [00:10<05:04,  3.14s/it, geodesic_dou=397, geodesic_rot=194, geodesic_se3=347, geodesic_xyz=346, loss=8.52, ncc=-.0769]Epoch [0/1000]:   3%|▎         | 3/100 [00:12<05:04,  3.14s/it, geodesic_dou=397, geodesic_rot=194, geodesic_se3=347, geodesic_xyz=346, loss=8.52, ncc=-.0769]Epoch [0/1000]:   3%|▎         | 3/100 [00:12<05:04,  3.14s/it, geodesic_dou=434, geodesic_rot=344, geodesic_se3=269, geodesic_xyz=265, loss=8.23, ncc=-.197] Epoch [0/1000]:   4%|▍         | 4/100 [00:12<04:25,  2.77s/it, geodesic_dou=434, geodesic_rot=344, geodesic_se3=269, geodesic_xyz=265, loss=8.23, ncc=-.197]Epoch [0/1000]:   4%|▍         | 4/100 [00:15<04:25,  2.77s/it, geodesic_dou=434, geodesic_rot=344, geodesic_se3=269, geodesic_xyz=265, loss=8.23, ncc=-.197]Epoch [0/1000]:   4%|▍         | 4/100 [00:15<04:25,  2.77s/it, geodesic_dou=291, geodesic_rot=104, geodesic_se3=273, geodesic_xyz=272, loss=6.68, ncc=-.0414]Epoch [0/1000]:   5%|▌         | 5/100 [00:15<04:04,  2.58s/it, geodesic_dou=291, geodesic_rot=104, geodesic_se3=273, geodesic_xyz=272, loss=6.68, ncc=-.0414]Epoch [0/1000]:   5%|▌         | 5/100 [00:17<04:04,  2.58s/it, geodesic_dou=291, geodesic_rot=104, geodesic_se3=273, geodesic_xyz=272, loss=6.68, ncc=-.0414]Epoch [0/1000]:   5%|▌         | 5/100 [00:17<04:04,  2.58s/it, geodesic_dou=353, geodesic_rot=142, geodesic_se3=324, geodesic_xyz=323, loss=7.78, ncc=-.0191]Epoch [0/1000]:   6%|▌         | 6/100 [00:17<03:54,  2.49s/it, geodesic_dou=353, geodesic_rot=142, geodesic_se3=324, geodesic_xyz=323, loss=7.78, ncc=-.0191]Epoch [0/1000]:   6%|▌         | 6/100 [00:19<03:54,  2.49s/it, geodesic_dou=353, geodesic_rot=142, geodesic_se3=324, geodesic_xyz=323, loss=7.78, ncc=-.0191]Epoch [0/1000]:   6%|▌         | 6/100 [00:19<03:54,  2.49s/it, geodesic_dou=412, geodesic_rot=244, geodesic_se3=334, geodesic_xyz=333, loss=8.78, ncc=-.312] Epoch [0/1000]:   7%|▋         | 7/100 [00:19<03:49,  2.47s/it, geodesic_dou=412, geodesic_rot=244, geodesic_se3=334, geodesic_xyz=333, loss=8.78, ncc=-.312]Epoch [0/1000]:   7%|▋         | 7/100 [00:22<03:49,  2.47s/it, geodesic_dou=412, geodesic_rot=244, geodesic_se3=334, geodesic_xyz=333, loss=8.78, ncc=-.312]Epoch [0/1000]:   7%|▋         | 7/100 [00:22<03:49,  2.47s/it, geodesic_dou=565, geodesic_rot=208, geodesic_se3=529, geodesic_xyz=526, loss=12.1, ncc=-.191]Epoch [0/1000]:   8%|▊         | 8/100 [00:22<03:45,  2.45s/it, geodesic_dou=565, geodesic_rot=208, geodesic_se3=529, geodesic_xyz=526, loss=12.1, ncc=-.191]Epoch [0/1000]:   8%|▊         | 8/100 [00:24<03:45,  2.45s/it, geodesic_dou=565, geodesic_rot=208, geodesic_se3=529, geodesic_xyz=526, loss=12.1, ncc=-.191]Epoch [0/1000]:   8%|▊         | 8/100 [00:24<03:45,  2.45s/it, geodesic_dou=239, geodesic_rot=107, geodesic_se3=215, geodesic_xyz=214, loss=5.52, ncc=0.0228]Epoch [0/1000]:   9%|▉         | 9/100 [00:24<03:34,  2.36s/it, geodesic_dou=239, geodesic_rot=107, geodesic_se3=215, geodesic_xyz=214, loss=5.52, ncc=0.0228]Epoch [0/1000]:   9%|▉         | 9/100 [00:26<03:34,  2.36s/it, geodesic_dou=239, geodesic_rot=107, geodesic_se3=215, geodesic_xyz=214, loss=5.52, ncc=0.0228]Epoch [0/1000]:   9%|▉         | 9/100 [00:26<03:34,  2.36s/it, geodesic_dou=245, geodesic_rot=160, geodesic_se3=185, geodesic_xyz=185, loss=5.35, ncc=-.0537]Epoch [0/1000]:  10%|█         | 10/100 [00:26<03:22,  2.25s/it, geodesic_dou=245, geodesic_rot=160, geodesic_se3=185, geodesic_xyz=185, loss=5.35, ncc=-.0537]Epoch [0/1000]:  10%|█         | 10/100 [00:28<03:22,  2.25s/it, geodesic_dou=245, geodesic_rot=160, geodesic_se3=185, geodesic_xyz=185, loss=5.35, ncc=-.0537]Epoch [0/1000]:  10%|█         | 10/100 [00:28<03:22,  2.25s/it, geodesic_dou=419, geodesic_rot=310, geodesic_se3=286, geodesic_xyz=282, loss=8.47, ncc=-.425] Epoch [0/1000]:  11%|█         | 11/100 [00:28<03:08,  2.12s/it, geodesic_dou=419, geodesic_rot=310, geodesic_se3=286, geodesic_xyz=282, loss=8.47, ncc=-.425]                                                                                                                                                              submitit ERROR (2024-11-29 22:51:20,419) - Submitted job triggered an exception
+Traceback (most recent call last):
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/submitit/core/_submit.py", line 11, in <module>
+    submitit_main()
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/submitit/core/submission.py", line 76, in submitit_main
+    process_job(args.folder)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/submitit/core/submission.py", line 69, in process_job
+    raise error
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/submitit/core/submission.py", line 55, in process_job
+    result = delayed.result()
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/submitit/core/utils.py", line 137, in result
+    self._result = self.function(*self.args, **self.kwargs)
+  File "/media/sda1/PersonalFiles/yx/project/diffpose/experiments/deepfluoro/train2.py", line 207, in main
+    train(
+  File "/media/sda1/PersonalFiles/yx/project/diffpose/experiments/deepfluoro/train2.py", line 74, in train
+    pred_img = drr(None, None, None, pose=pred_pose)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffdrr/drr.py", line 137, in forward
+    img = siddon_raycast(source, target, self.density, self.spacing)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffdrr/siddon.py", line 21, in siddon_raycast
+    voxels = _get_voxel(alphamid, source, target, volume, spacing, dims, maxidx, eps)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffdrr/siddon.py", line 84, in _get_voxel
+    idxs = _get_index(alpha, source, target, spacing, dims, maxidx, eps)
+  File "/media/sda1/PersonalFiles/yx/envs/yx2/lib/python3.10/site-packages/diffdrr/siddon.py", line 92, in _get_index
+    idxs = idxs.trunc()
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 454.00 MiB. GPU 0 has a total capacity of 23.69 GiB of which 409.25 MiB is free. Process 28622 has 3.04 GiB memory in use. Process 28663 has 2.68 GiB memory in use. Process 28704 has 3.95 GiB memory in use. Including non-PyTorch memory, this process has 3.10 GiB memory in use. Process 28827 has 3.82 GiB memory in use. Process 28745 has 6.67 GiB memory in use. Of the allocated memory 1.61 GiB is allocated by PyTorch, and 1.17 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
