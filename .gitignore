@@ -1,8 +1,4 @@
 checkpoints/
-evaluations/
-data/
-logs/
-runs/
 
 _docs/
 _proc/
@@ -156,36 +152,13 @@ checklink/cookies.txt
 # Quarto
 .quarto
 
-# Clinical data, segmentation, registration, and experiment outputs
+# Clinical source data
 ours/data/
-ours/dataset/
-ours/seg/
-ours/bone_seg/
-ours/bone_segmentation/
-ours/reg_result/
-ours/nnuet/zyl_result/
-ours/**/trainA/
-ours/**/trainB/
-ours/**/testA/
-ours/**/testB/
-ours/abret/
-ours/case/**/__pycache__/
-ours/case/**/checkpoints/
-ours/case/**/runs/
-ours/case/**/outcmaes/
-ours/case/**/*.log
-ours/case/**/*.out
-ours/case/**/*.png
-ours/case/**/*.jpg
-ours/case/**/*.jpeg
-ours/case/**/fid_*.json
-ours/wsreg/ret/
-ours/wsreg/nohup*.out
-ours/Bipose/ret/
-ours/Bipose/nohup*.out
-ours/gif/
 
-# Medical images, archives, and trained model artifacts
+# Large DeepFluoro source dataset outside ours/data
+/data/ipcai_2020_full_res_data.h5
+
+# Medical images
 *.dcm
 *.dicom
 *.nii
@@ -193,13 +166,18 @@ ours/gif/
 *.mha
 *.mhd
 *.nrrd
+
+# Model checkpoints and weights
 *.ckpt
 *.pth
 *.pt
 *.onnx
-*.h5
+*.safetensors
+
+# Derived arrays and serialized results
 *.pkl
 *.npy
 *.npz
-*.tar.bz2
-*.safetensors
+
+# Run logs
+*.out
