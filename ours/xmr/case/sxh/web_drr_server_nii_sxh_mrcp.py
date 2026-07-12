@@ -5,8 +5,9 @@ MRCP 501 is resampled to the CT 3 DRR grid and rendered with ``DRRMRCP``
 (no bile duct overlay).
 
 Run from ``diffpose/ours`` or the project root:
-    python diffpose/ours/web_drr_server_nii_sxh_mrcp.py
-    python diffpose/ours/web_drr_server_nii_sxh_mrcp.py --projection max
+    python xmr/case/sxh/web_drr_server_nii_sxh_mrcp.py
+    python xmr/case/sxh/web_drr_server_nii_sxh_mrcp.py --projection max
+    python -m xmr.case.sxh.web_drr_server_nii_sxh_mrcp
 """
 
 from __future__ import annotations
@@ -22,7 +23,8 @@ import numpy as np
 import torch
 from aiohttp import web
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = Path(__file__).resolve().parents[5]
+SXH_CASE_ROOT = Path(__file__).resolve().parent
 DIFFPOSE_ROOT = PROJECT_ROOT / "diffpose"
 OURS_ROOT = DIFFPOSE_ROOT / "ours"
 for path in (DIFFPOSE_ROOT, OURS_ROOT):
@@ -55,16 +57,16 @@ def parse_args() -> argparse.Namespace:
 
 
 class SXHMRCPWebPoseAdjuster(WebPoseAdjuster):
-    """MRCP-only DRR web UI with poses saved under diffpose/ours/gt_pose/sxh_mrcp."""
+    """MRCP-only DRR web UI with poses saved under xmr/case/sxh/runs."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.save_dir = PROJECT_ROOT / "diffpose" / "ours" / "gt_pose" / "sxh_mrcp"
+        self.save_dir = SXH_CASE_ROOT / "runs" / "gt_pose_mrcp"
         self.save_dir.mkdir(parents=True, exist_ok=True)
 
-    def save_pose(self, subdir="sxh_mrcp"):
+    def save_pose(self, subdir="gt_pose_mrcp"):
         try:
-            save_path = PROJECT_ROOT / "diffpose" / "ours" / "gt_pose" / subdir
+            save_path = SXH_CASE_ROOT / "runs" / subdir
             save_path.mkdir(parents=True, exist_ok=True)
 
             current_pose = self.get_current_pose()
@@ -107,7 +109,7 @@ class SXHMRCPWebPoseAdjuster(WebPoseAdjuster):
 
 async def main():
     args = parse_args()
-    device = "cuda:0" if torch.cuda.is_available() else "cpu"
+    device = "cuda:1" if torch.cuda.is_available() else "cpu"
 
     specimen = IntubationDatasetMRCP(
         DEFAULT_MRCP_NII,

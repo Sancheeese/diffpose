@@ -134,7 +134,7 @@ def render_cases(
     from diffpose.calibration import RigidTransform
     from ours.case.sxh.CT_dataset_MR import IntubationDatasetMR
     from ours.case.sxh.CT_dataset_nii import Transforms
-    from ours.utils.drr import DRR
+    from ours.utils.drr_mrcp import DRRMRCP
     from ours.utils.drr_seg import DRRSeg
 
     if device_arg == "auto":
@@ -156,14 +156,13 @@ def render_cases(
     subsample = 512 / height
     delx = specimen.delx * subsample
 
-    drr = DRR(
+    drr = DRRMRCP(
         specimen.volume,
         specimen.spacing,
         sdr=specimen.sdr,
         height=height,
         delx=delx,
         reverse_x_axis=True,
-        bone_attenuation_multiplier=3,
     ).to(device)
     drr_bile_duct = DRRSeg(
         specimen.mr_mask,
