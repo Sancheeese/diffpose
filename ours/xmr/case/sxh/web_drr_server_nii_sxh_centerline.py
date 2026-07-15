@@ -11,14 +11,19 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import base64
 import sys
 import time
 from pathlib import Path
 
+import cv2
 import nibabel as nib
 import numpy as np
 import torch
 from aiohttp import web
+from scipy import ndimage, sparse
+from scipy.sparse.csgraph import dijkstra
+from skimage.morphology import skeletonize
 
 PROJECT_ROOT = Path(__file__).resolve().parents[5]
 SXH_CASE_ROOT = Path(__file__).resolve().parent
@@ -37,7 +42,7 @@ from ours.case.sxh.CT_dataset_nii import Transforms  # noqa: E402
 from ours.utils.drr import DRR  # noqa: E402
 from ours.utils.drr_seg import DRRSeg  # noqa: E402
 from ours.web_drr_server_nii import generate_overlay_image_cv2, numpy_to_base64_cv2  # noqa: E402
-from xmr.case.sxh.image_io import write_overlay_png  # noqa: E402
+from xmr.case.sxh.image_io import to_zero_one, write_overlay_png  # noqa: E402
 from xmr.case.sxh.pose_io import DEFAULT_RUNS_MASK_DIR, default_registered_index, discover_registered_indices  # noqa: E402
 from xmr.case.sxh.web_drr_server_nii_sxh import (  # noqa: E402
     DEFAULT_CT_NII,
@@ -48,6 +53,7 @@ from xmr.case.sxh.centerline.centerline import extract_centerline_tree  # noqa: 
 
 
 DEFAULT_CENTERLINE_NII = SXH_CASE_ROOT / "centerline" / "outputs" / "sxh_mrcp_006_centerline_tree.nii.gz"
+DEFAULT_GUIDEWIRE_DIR = SXH_CASE_ROOT / "guidewire"
 DEFAULT_OUTPUT_DIR = SXH_CASE_ROOT / "outputs" / "web_centerline"
 SXH_DRR_PARAMS = dict(x_offset=20, y_offset=200, z_offset=100, z_cut=250, factors=[0.6, 0.6, 1.5])
 
@@ -134,11 +140,216 @@ def render_soft_centerline(
     return (1.0 - torch.exp(log_not_covered)).unsqueeze(0).unsqueeze(0)
 
 
+def matching_guidewire_mask_path(xray_filename: str | Path, guidewire_dir: str | Path) -> Path | None:
+    """Find the guidewire segmentation whose NIfTI stem matches an X-ray DICOM stem."""
+    xray_stem = Path(xray_filename).stem
+    path = Path(guidewire_dir) / f"{xray_stem}.nii.gz"
+    return path if path.is_file() else None
+
+
+def guidewire_indices_for_specimen(specimen, guidewire_dir: str | Path) -> list[int]:
+    """Return dataset indices whose X-ray DICOM stems have a guidewire segmentation."""
+    return [
+        index
+        for index in range(len(specimen))
+        if matching_guidewire_mask_path(specimen.get_x_filename(index), guidewire_dir) is not None
+    ]
+
+
+def extract_guidewire_points(mask: np.ndarray) -> np.ndarray:
+    """Return ``(x, y)`` points from the largest 2D guidewire skeleton component."""
+    binary = np.asarray(mask) > 0
+    if binary.ndim != 2:
+        raise ValueError(f"Expected a 2D guidewire mask, got shape {binary.shape}")
+    labels, count = ndimage.label(binary, structure=np.ones((3, 3), dtype=np.uint8))
+    if count == 0:
+        return np.empty((0, 2), dtype=np.float32)
+    sizes = np.bincount(labels.ravel())
+    sizes[0] = 0
+    largest = labels == sizes.argmax()
+    skeleton = skeletonize(largest)
+    yx = np.argwhere(skeleton)
+    return yx[:, ::-1].astype(np.float32)
+
+
+def _skeleton_graph(points_xy: np.ndarray) -> sparse.csr_matrix:
+    point_to_index = {tuple(point.astype(int)): index for index, point in enumerate(points_xy)}
+    rows: list[int] = []
+    columns: list[int] = []
+    weights: list[float] = []
+    for index, point in enumerate(points_xy.astype(int)):
+        for dy, dx in ((0, 1), (1, -1), (1, 0), (1, 1)):
+            neighbor_index = point_to_index.get((point[0] + dx, point[1] + dy))
+            if neighbor_index is not None:
+                distance = float(np.hypot(dx, dy))
+                rows.extend((index, neighbor_index))
+                columns.extend((neighbor_index, index))
+                weights.extend((distance, distance))
+    return sparse.csr_matrix((weights, (rows, columns)), shape=(len(points_xy), len(points_xy)))
+
+
+def extract_ordered_guidewire_chain(mask: np.ndarray) -> np.ndarray:
+    """Trace the longest endpoint-to-endpoint path of a guidewire skeleton."""
+    points_xy = extract_guidewire_points(mask)
+    if len(points_xy) < 2:
+        return points_xy
+    graph = _skeleton_graph(points_xy)
+    degrees = np.diff(graph.indptr)
+    endpoints = np.flatnonzero(degrees == 1)
+    if len(endpoints) >= 2:
+        endpoint_distances = dijkstra(graph, directed=False, indices=endpoints)
+        endpoint_distances[~np.isfinite(endpoint_distances)] = -np.inf
+        source_row, target_column = np.unravel_index(endpoint_distances.argmax(), endpoint_distances.shape)
+        source, target = int(endpoints[source_row]), int(target_column)
+    else:
+        distances = dijkstra(graph, directed=False, indices=0)
+        distances[~np.isfinite(distances)] = -np.inf
+        source, target = 0, int(distances.argmax())
+    _, predecessors = dijkstra(graph, directed=False, indices=source, return_predecessors=True)
+    path = [target]
+    while path[-1] != source:
+        predecessor = int(predecessors[path[-1]])
+        if predecessor < 0:
+            raise RuntimeError("Guidewire skeleton path reconstruction failed")
+        path.append(predecessor)
+    return points_xy[np.asarray(path[::-1])]
+
+
+def decompose_graph_into_chains(num_vertices: int, edges: torch.Tensor) -> list[np.ndarray]:
+    """Split a centerline graph into maximal paths between endpoints and junctions."""
+    adjacency = [set() for _ in range(num_vertices)]
+    for start, end in edges.detach().cpu().numpy().astype(int):
+        adjacency[start].add(end)
+        adjacency[end].add(start)
+    degrees = [len(neighbors) for neighbors in adjacency]
+    anchors = {index for index, degree in enumerate(degrees) if degree != 2}
+    junctions = {index for index, degree in enumerate(degrees) if degree > 2}
+    junction_group: dict[int, int] = {}
+    group_id = 0
+    for start in sorted(junctions):
+        if start in junction_group:
+            continue
+        stack = [start]
+        junction_group[start] = group_id
+        while stack:
+            current = stack.pop()
+            for neighbor in adjacency[current]:
+                if neighbor in junctions and neighbor not in junction_group:
+                    junction_group[neighbor] = group_id
+                    stack.append(neighbor)
+        group_id += 1
+
+    def same_junction_cluster(first: int, second: int) -> bool:
+        return first in junction_group and junction_group[first] == junction_group.get(second)
+
+    used_edges: set[tuple[int, int]] = set()
+    chains: list[np.ndarray] = []
+
+    for anchor in sorted(anchors):
+        for neighbor in sorted(adjacency[anchor]):
+            edge = tuple(sorted((anchor, neighbor)))
+            if edge in used_edges or same_junction_cluster(anchor, neighbor):
+                used_edges.add(edge)
+                continue
+            path = [anchor]
+            previous, current = anchor, neighbor
+            while True:
+                path.append(current)
+                used_edges.add(tuple(sorted((previous, current))))
+                if current in anchors:
+                    break
+                next_nodes = sorted(node for node in adjacency[current] if node != previous)
+                if not next_nodes:
+                    break
+                previous, current = current, next_nodes[0]
+            if len(path) >= 2:
+                chains.append(np.asarray(path, dtype=np.int64))
+
+    for start in range(num_vertices):
+        for neighbor in sorted(adjacency[start]):
+            edge = tuple(sorted((start, neighbor)))
+            if edge in used_edges:
+                continue
+            path = [start]
+            previous, current = start, neighbor
+            while True:
+                path.append(current)
+                used_edges.add(tuple(sorted((previous, current))))
+                next_nodes = sorted(node for node in adjacency[current] if node != previous)
+                if not next_nodes or current == start:
+                    break
+                previous, current = current, next_nodes[0]
+            if len(path) >= 2:
+                chains.append(np.asarray(path, dtype=np.int64))
+    return chains
+
+
+def reflect_points_across_y_equals_x(points: np.ndarray) -> np.ndarray:
+    """Apply the guidewire NIfTI-to-X-ray coordinate reflection ``(x, y) -> (y, x)``."""
+    points = np.asarray(points, dtype=np.float32)
+    if points.ndim != 2 or points.shape[1] != 2:
+        raise ValueError(f"Expected points with shape (N, 2), got {points.shape}")
+    return points[:, [1, 0]].copy()
+
+
+def subsample_chain_points(points: np.ndarray, min_spacing_px: float) -> np.ndarray:
+    """Retain visibly separated points from an ordered 2D chain for display only."""
+    points = np.asarray(points, dtype=np.float32)
+    if points.ndim != 2 or points.shape[1] != 2:
+        raise ValueError(f"Expected points with shape (N, 2), got {points.shape}")
+    if min_spacing_px <= 0:
+        raise ValueError(f"min_spacing_px must be positive, got {min_spacing_px}")
+    if len(points) <= 2:
+        return points.copy()
+
+    retained = [points[0]]
+    for point in points[1:-1]:
+        if np.linalg.norm(point - retained[-1]) >= min_spacing_px:
+            retained.append(point)
+    retained.append(points[-1])
+    return np.asarray(retained, dtype=np.float32)
+
+
+def render_chain_points_overlay(
+    background: np.ndarray,
+    centerline_points: np.ndarray,
+    centerline_chains: list[np.ndarray],
+    guidewire_chain: np.ndarray,
+) -> np.ndarray:
+    """Draw ordered MRCP branch-chain points and guidewire-chain points over one X-ray."""
+    background_u8 = (to_zero_one(background) * 255).astype(np.uint8)
+    overlay = cv2.cvtColor(background_u8, cv2.COLOR_GRAY2BGR)
+    height, width = overlay.shape[:2]
+    projected = np.asarray(centerline_points, dtype=np.float32)
+    for chain in centerline_chains:
+        display_points = subsample_chain_points(projected[np.asarray(chain, dtype=np.int64)], min_spacing_px=4.0)
+        for column, row in display_points:
+            if 0 <= column < width and 0 <= row < height:
+                cv2.circle(
+                    overlay,
+                    (round(float(column)), round(float(row))),
+                    1,
+                    (128, 255, 255),
+                    -1,
+                    cv2.LINE_AA,
+                )
+    guidewire_display_points = subsample_chain_points(guidewire_chain, min_spacing_px=4.0)
+    for column, row in guidewire_display_points:
+        if 0 <= column < width and 0 <= row < height:
+            cv2.circle(overlay, (round(float(column)), round(float(row))), 1, (0, 0, 255), -1, cv2.LINE_AA)
+    return overlay
+
+
+def bgr_to_base64(image: np.ndarray) -> str:
+    success, encoded = cv2.imencode(".png", image)
+    return base64.b64encode(encoded).decode("ascii") if success else ""
+
+
 def build_centerline_http_response(html: str) -> str:
     """Reuse the established four-panel UI, replacing MRCP intensity with centerline overlay."""
     return (
         html.replace("<title>SXH DRR + MRCP</title>", "<title>SXH DRR + Centerline</title>")
-        .replace("MRCP Projection", "MRCP Centerline Overlay")
+        .replace("MRCP Projection", "MRCP Branch Chains / Guidewire Chain")
         .replace("SXH DRR + MRCP", "SXH DRR + Centerline")
     )
 
@@ -191,29 +402,61 @@ def load_raw_centerline_graph_in_drr_coordinates(
 class SXHCenterlineWebPoseAdjuster(SXHWebPoseAdjuster):
     """Extend the established SXH viewer with a centerline-projection panel."""
 
-    def __init__(self, *args, centerline_vertices: torch.Tensor, centerline_edges: torch.Tensor, **kwargs):
+    def __init__(
+        self,
+        *args,
+        centerline_vertices: torch.Tensor,
+        centerline_edges: torch.Tensor,
+        guidewire_dir: Path = DEFAULT_GUIDEWIRE_DIR,
+        **kwargs,
+    ):
         self.centerline_vertices = centerline_vertices
         self.centerline_edges = centerline_edges
+        self.centerline_chains = decompose_graph_into_chains(len(centerline_vertices), centerline_edges)
+        self.guidewire_dir = Path(guidewire_dir)
+        self._guidewire_points_cache: dict[Path, np.ndarray] = {}
         super().__init__(*args, drr_mrcp=None, **kwargs)
+
+    def guidewire_points_for_index(self, index: int) -> np.ndarray:
+        guidewire_path = matching_guidewire_mask_path(self.specimen.get_x_filename(index), self.guidewire_dir)
+        if guidewire_path is None:
+            return np.empty((0, 2), dtype=np.float32)
+        cached = self._guidewire_points_cache.get(guidewire_path)
+        if cached is not None:
+            return cached
+        guidewire_nii = nib.load(str(guidewire_path))
+        guidewire_mask = np.squeeze(np.asanyarray(guidewire_nii.dataobj)).astype(np.float32)
+        resized = self.transforms.resize(torch.from_numpy(guidewire_mask)[None, None]).squeeze().numpy()
+        points = reflect_points_across_y_equals_x(extract_ordered_guidewire_chain(resized > 0.5))
+        self._guidewire_points_cache[guidewire_path] = points
+        return points
 
     def render_frame_arrays(self) -> dict[str, np.ndarray]:
         arrays = super().render_frame_arrays()
+        pose = self.get_current_pose()
+        centerline_points = project_points_to_detector(self.centerline_vertices.to(self.device), pose, self.drr.detector)
         centerline = render_soft_centerline(
             self.centerline_vertices.to(self.device),
             self.centerline_edges.to(self.device),
-            self.get_current_pose(),
+            pose,
             self.drr.detector,
         )
         arrays["centerline"] = centerline.detach().cpu().squeeze().numpy()
+        arrays["centerline_points"] = centerline_points.detach().cpu().numpy()
+        arrays["centerline_chains"] = self.centerline_chains
+        arrays["guidewire_chain"] = self.guidewire_points_for_index(self.current_index)
         return arrays
 
     def generate_drr_and_overlay_images(self):
         try:
             arrays = self.render_frame_arrays()
+            points_overlay = render_chain_points_overlay(
+                arrays["xray"], arrays["centerline_points"], arrays["centerline_chains"], arrays["guidewire_chain"]
+            )
             return (
                 numpy_to_base64_cv2(arrays["ct_drr"]),
                 generate_overlay_image_cv2(arrays["xray"], arrays["bile_mask"]),
-                generate_overlay_image_cv2(arrays["xray"], arrays["centerline"], alpha=0.8),
+                bgr_to_base64(points_overlay),
             )
         except Exception as exc:
             print(f"generate centerline overlay error: {exc}")
@@ -224,6 +467,26 @@ class SXHCenterlineWebPoseAdjuster(SXHWebPoseAdjuster):
         centerline_path = self.output_dir / tag / f"sxh_xray{self.current_index:03d}_centerline_overlay.png"
         write_overlay_png(centerline_path, arrays["xray"], arrays["centerline"])
         paths["centerline_overlay"] = str(centerline_path)
+        points_path = self.output_dir / tag / f"sxh_xray{self.current_index:03d}_registration_points_overlay.png"
+        if not cv2.imwrite(
+            str(points_path),
+            render_chain_points_overlay(
+                arrays["xray"], arrays["centerline_points"], arrays["centerline_chains"], arrays["guidewire_chain"]
+            ),
+        ):
+            raise IOError(f"Failed to write registration points overlay: {points_path}")
+        paths["registration_points_overlay"] = str(points_path)
+        chain_offsets = np.cumsum([0, *[len(chain) for chain in arrays["centerline_chains"]]], dtype=np.int64)
+        chain_indices = np.concatenate(arrays["centerline_chains"]) if arrays["centerline_chains"] else np.empty(0, dtype=np.int64)
+        point_data_path = self.output_dir / tag / f"sxh_xray{self.current_index:03d}_registration_chains.npz"
+        np.savez_compressed(
+            point_data_path,
+            centerline_points_2d=arrays["centerline_points"],
+            centerline_chain_indices=chain_indices,
+            centerline_chain_offsets=chain_offsets,
+            guidewire_chain_2d=arrays["guidewire_chain"],
+        )
+        paths["registration_chains"] = str(point_data_path)
         return paths
 
     async def send_updates(self, websocket):
@@ -262,6 +525,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--init-pose", choices=["zero", "registered"], default="registered")
     parser.add_argument("--runs-mask-dir", type=Path, default=DEFAULT_RUNS_MASK_DIR)
     parser.add_argument("--centerline", type=Path, default=DEFAULT_CENTERLINE_NII)
+    parser.add_argument("--guidewire-dir", type=Path, default=DEFAULT_GUIDEWIRE_DIR)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--start-index", type=int, default=None)
     return parser.parse_args()
@@ -270,13 +534,20 @@ def parse_args() -> argparse.Namespace:
 async def run_server(args: argparse.Namespace) -> None:
     if not args.centerline.is_file():
         raise FileNotFoundError(f"Centerline NIfTI not found: {args.centerline}")
-    device = "cuda:1" if torch.cuda.is_available() else "cpu"
+    if not args.guidewire_dir.is_dir():
+        raise FileNotFoundError(f"Guidewire directory not found: {args.guidewire_dir}")
+    device = "cuda:0" if torch.cuda.is_available() else "cpu"
+    specimen = IntubationDatasetMR(DEFAULT_CT_NII, DEFAULT_XRAY_ROOT, **SXH_DRR_PARAMS)
+    guidewire_indices = guidewire_indices_for_specimen(specimen, args.guidewire_dir)
     start_index = args.start_index
     if start_index is None:
-        start_index = default_registered_index(args.runs_mask_dir) if args.init_pose == "registered" else 0
+        if args.init_pose == "registered":
+            registered_indices = set(discover_registered_indices(args.runs_mask_dir))
+            start_index = next((index for index in guidewire_indices if index in registered_indices), None)
+            start_index = default_registered_index(args.runs_mask_dir) if start_index is None else start_index
+        else:
+            start_index = guidewire_indices[0] if guidewire_indices else 0
         start_index = 0 if start_index is None else start_index
-
-    specimen = IntubationDatasetMR(DEFAULT_CT_NII, DEFAULT_XRAY_ROOT, **SXH_DRR_PARAMS)
     centerline_vertices, centerline_edges = load_raw_centerline_graph_in_drr_coordinates(
         args.centerline,
         tuple(specimen.volume.shape),
@@ -296,6 +567,7 @@ async def run_server(args: argparse.Namespace) -> None:
         device,
         centerline_vertices=centerline_vertices,
         centerline_edges=centerline_edges,
+        guidewire_dir=args.guidewire_dir,
         init_pose_mode=args.init_pose,
         runs_mask_dir=args.runs_mask_dir,
         output_dir=args.output_dir,
@@ -321,6 +593,8 @@ async def run_server(args: argparse.Namespace) -> None:
     print(f"HTTP server: http://{adjuster.host}:{adjuster.http_port}")
     print(f"WebSocket server: ws://{adjuster.host}:{adjuster.ws_port}/ws")
     print(f"Centerline source: {args.centerline}")
+    print(f"Guidewire directory: {args.guidewire_dir}")
+    print(f"Guidewire dataset indices: {guidewire_indices}")
     print(f"Raw centerline graph: vertices={len(centerline_vertices)}, edges={len(centerline_edges)}")
     print(f"Registered CSV indices: {discover_registered_indices(args.runs_mask_dir)}")
     await asyncio.Future()
