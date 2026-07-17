@@ -1,0 +1,13 @@
+{
+  "input_size": 256,
+  "fov_radius": 119,
+  "square_bounds": {
+    "start_y": 44,
+    "end_y": 212,
+    "start_x": 44,
+    "end_x": 212,
+    "side": 168
+  },
+  "output_size": 256,
+  "output_dir": "/data/zsr/project/diffpose/ours/xmr/case/sxh/runs/feature_common_comir_antishortcut/previews/square_crop"
+}

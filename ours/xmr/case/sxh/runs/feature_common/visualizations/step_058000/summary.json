@@ -1,0 +1,146 @@
+{
+  "checkpoint": "diffpose/ours/xmr/case/sxh/runs/feature_common/checkpoints/last.pt",
+  "checkpoint_step": 58000,
+  "device": "cuda:0",
+  "contrast_multiplier": 3.0,
+  "pairs": {
+    "center pose": {
+      "ct_to_mrcp": {
+        "mean_error_px": 0.6455109119415283,
+        "median_error_px": 0.0,
+        "recall_at_1px": 0.984375,
+        "recall_at_2px": 0.984375,
+        "recall_at_5px": 0.984375
+      },
+      "mrcp_to_ct": {
+        "mean_error_px": 0.8629817962646484,
+        "median_error_px": 0.0,
+        "recall_at_1px": 0.96875,
+        "recall_at_2px": 0.96875,
+        "recall_at_5px": 0.96875
+      },
+      "anchors": [
+        {
+          "anchor_yx": [
+            111,
+            107
+          ],
+          "predicted_yx": [
+            111,
+            107
+          ],
+          "error_px": 0.0
+        },
+        {
+          "anchor_yx": [
+            144,
+            123
+          ],
+          "predicted_yx": [
+            144,
+            123
+          ],
+          "error_px": 0.0
+        },
+        {
+          "anchor_yx": [
+            138,
+            232
+          ],
+          "predicted_yx": [
+            138,
+            232
+          ],
+          "error_px": 0.0
+        },
+        {
+          "anchor_yx": [
+            59,
+            124
+          ],
+          "predicted_yx": [
+            59,
+            124
+          ],
+          "error_px": 0.0
+        }
+      ]
+    },
+    "perturbed pose": {
+      "ct_to_mrcp": {
+        "mean_error_px": 0.2657398581504822,
+        "median_error_px": 0.0,
+        "recall_at_1px": 0.9921875,
+        "recall_at_2px": 0.9921875,
+        "recall_at_5px": 0.9921875
+      },
+      "mrcp_to_ct": {
+        "mean_error_px": 0.6663641333580017,
+        "median_error_px": 0.0,
+        "recall_at_1px": 0.9765625,
+        "recall_at_2px": 0.9765625,
+        "recall_at_5px": 0.9765625
+      },
+      "anchors": [
+        {
+          "anchor_yx": [
+            150,
+            97
+          ],
+          "predicted_yx": [
+            150,
+            97
+          ],
+          "error_px": 0.0
+        },
+        {
+          "anchor_yx": [
+            68,
+            55
+          ],
+          "predicted_yx": [
+            68,
+            55
+          ],
+          "error_px": 0.0
+        },
+        {
+          "anchor_yx": [
+            192,
+            44
+          ],
+          "predicted_yx": [
+            192,
+            44
+          ],
+          "error_px": 0.0
+        },
+        {
+          "anchor_yx": [
+            110,
+            130
+          ],
+          "predicted_yx": [
+            105,
+            129
+          ],
+          "error_px": 5.099019527435303
+        }
+      ]
+    }
+  },
+  "perturbed_offset_euler_zyx_radians": [
+    [
+      -0.009528128430247307,
+      -0.014759708195924759,
+      -0.03242775425314903
+    ]
+  ],
+  "perturbed_offset_translation_mm": [
+    [
+      26.70012855529785,
+      -4.829132556915283,
+      -19.92595672607422
+    ]
+  ]
+}

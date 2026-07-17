@@ -1,0 +1,51 @@
+{
+  "checkpoint": "diffpose/ours/xmr/case/sxh/runs/feature_common_comir_patch/checkpoints/step_100000.pt",
+  "checkpoint_step": 100000,
+  "device": "cuda:0",
+  "cases": [
+    {
+      "name": "same center pose 1",
+      "offset_euler_zyx_radians": null,
+      "offset_translation_mm": null
+    },
+    {
+      "name": "same center pose 2",
+      "offset_euler_zyx_radians": null,
+      "offset_translation_mm": null
+    },
+    {
+      "name": "different pose 1",
+      "offset_euler_zyx_radians": [
+        [
+          0.508798360824585,
+          0.0531776137650013,
+          -0.2636930048465729
+        ]
+      ],
+      "offset_translation_mm": [
+        [
+          -2.808566093444824,
+          4.090035915374756,
+          10.911867141723633
+        ]
+      ]
+    },
+    {
+      "name": "different pose 2",
+      "offset_euler_zyx_radians": [
+        [
+          0.031135907396674156,
+          0.14660337567329407,
+          -0.34089183807373047
+        ]
+      ],
+      "offset_translation_mm": [
+        [
+          -4.425029754638672,
+          -130.21133422851562,
+          -20.40462875366211
+        ]
+      ]
+    }
+  ]
+}

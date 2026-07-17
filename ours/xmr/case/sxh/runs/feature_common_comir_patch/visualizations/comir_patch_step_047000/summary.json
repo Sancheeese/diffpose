@@ -1,0 +1,153 @@
+{
+  "checkpoint": "diffpose/ours/xmr/case/sxh/runs/feature_common_comir_patch/checkpoints/step_047000.pt",
+  "checkpoint_step": 47000,
+  "device": "cuda:0",
+  "patch_size": 32,
+  "contrast_multiplier": 3.0,
+  "pairs": {
+    "center pose": {
+      "sampled_patch_loss": 4.3083869968540967e-05,
+      "sampled_xray_to_mrcp": 4.313788303988986e-05,
+      "sampled_mrcp_to_xray": 4.302986053517088e-05,
+      "xray_to_mrcp_patch_metrics": {
+        "mean_error_px": 0.0,
+        "median_error_px": 0.0,
+        "recall_at_1px": 1.0,
+        "recall_at_2px": 1.0,
+        "recall_at_5px": 1.0
+      },
+      "mrcp_to_xray_patch_metrics": {
+        "mean_error_px": 0.0,
+        "median_error_px": 0.0,
+        "recall_at_1px": 1.0,
+        "recall_at_2px": 1.0,
+        "recall_at_5px": 1.0
+      },
+      "anchors": [
+        {
+          "anchor_yx": [
+            104,
+            99
+          ],
+          "predicted_yx": [
+            104,
+            99
+          ],
+          "error_px": 0.0
+        },
+        {
+          "anchor_yx": [
+            150,
+            120
+          ],
+          "predicted_yx": [
+            150,
+            120
+          ],
+          "error_px": 0.0
+        },
+        {
+          "anchor_yx": [
+            148,
+            223
+          ],
+          "predicted_yx": [
+            148,
+            223
+          ],
+          "error_px": 0.0
+        },
+        {
+          "anchor_yx": [
+            206,
+            135
+          ],
+          "predicted_yx": [
+            206,
+            135
+          ],
+          "error_px": 0.0
+        }
+      ]
+    },
+    "perturbed pose": {
+      "sampled_patch_loss": 5.4927739256527275e-05,
+      "sampled_xray_to_mrcp": 5.4972446378087625e-05,
+      "sampled_mrcp_to_xray": 5.488302849698812e-05,
+      "xray_to_mrcp_patch_metrics": {
+        "mean_error_px": 0.0,
+        "median_error_px": 0.0,
+        "recall_at_1px": 1.0,
+        "recall_at_2px": 1.0,
+        "recall_at_5px": 1.0
+      },
+      "mrcp_to_xray_patch_metrics": {
+        "mean_error_px": 0.0,
+        "median_error_px": 0.0,
+        "recall_at_1px": 1.0,
+        "recall_at_2px": 1.0,
+        "recall_at_5px": 1.0
+      },
+      "anchors": [
+        {
+          "anchor_yx": [
+            75,
+            85
+          ],
+          "predicted_yx": [
+            75,
+            85
+          ],
+          "error_px": 0.0
+        },
+        {
+          "anchor_yx": [
+            111,
+            128
+          ],
+          "predicted_yx": [
+            111,
+            128
+          ],
+          "error_px": 0.0
+        },
+        {
+          "anchor_yx": [
+            213,
+            96
+          ],
+          "predicted_yx": [
+            213,
+            96
+          ],
+          "error_px": 0.0
+        },
+        {
+          "anchor_yx": [
+            197,
+            122
+          ],
+          "predicted_yx": [
+            197,
+            122
+          ],
+          "error_px": 0.0
+        }
+      ]
+    }
+  },
+  "perturbed_offset_euler_zyx_radians": [
+    [
+      0.07750187814235687,
+      -0.40495988726615906,
+      0.013314852491021156
+    ]
+  ],
+  "perturbed_offset_translation_mm": [
+    [
+      -12.740941047668457,
+      3.045466423034668,
+      5.0259904861450195
+    ]
+  ]
+}

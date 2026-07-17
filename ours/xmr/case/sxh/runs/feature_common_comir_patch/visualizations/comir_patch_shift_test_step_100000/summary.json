@@ -1,0 +1,100 @@
+{
+  "checkpoint": "diffpose/ours/xmr/case/sxh/runs/feature_common_comir_patch/checkpoints/step_100000.pt",
+  "checkpoint_step": 100000,
+  "device": "cuda:0",
+  "patch_size": 32,
+  "shifts_px_right": [
+    0,
+    8,
+    16,
+    32,
+    48
+  ],
+  "records": [
+    {
+      "dx": 0,
+      "anchor_yx": [
+        79,
+        58
+      ],
+      "true_shifted_yx": [
+        79,
+        58
+      ],
+      "predicted_yx": [
+        79,
+        58
+      ],
+      "true_error_px": 0.0,
+      "original_coordinate_error_px": 0.0
+    },
+    {
+      "dx": 8,
+      "anchor_yx": [
+        79,
+        58
+      ],
+      "true_shifted_yx": [
+        79,
+        66
+      ],
+      "predicted_yx": [
+        79,
+        66
+      ],
+      "true_error_px": 0.0,
+      "original_coordinate_error_px": 8.0
+    },
+    {
+      "dx": 16,
+      "anchor_yx": [
+        79,
+        58
+      ],
+      "true_shifted_yx": [
+        79,
+        74
+      ],
+      "predicted_yx": [
+        79,
+        74
+      ],
+      "true_error_px": 0.0,
+      "original_coordinate_error_px": 16.0
+    },
+    {
+      "dx": 32,
+      "anchor_yx": [
+        79,
+        58
+      ],
+      "true_shifted_yx": [
+        79,
+        90
+      ],
+      "predicted_yx": [
+        79,
+        90
+      ],
+      "true_error_px": 0.0,
+      "original_coordinate_error_px": 32.0
+    },
+    {
+      "dx": 48,
+      "anchor_yx": [
+        79,
+        58
+      ],
+      "true_shifted_yx": [
+        79,
+        106
+      ],
+      "predicted_yx": [
+        79,
+        106
+      ],
+      "true_error_px": 0.0,
+      "original_coordinate_error_px": 48.0
+    }
+  ]
+}

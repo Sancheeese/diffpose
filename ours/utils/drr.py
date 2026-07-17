@@ -73,21 +73,16 @@ class DRR(nn.Module):
         # self.air = torch.where(self.volume <= -800)
         # self.soft_tissue = torch.where((-800 < self.volume) & (self.volume <= 350))
         # self.bone = torch.where(350 < self.volume)
-        self.air = self.volume <= -800
-        self.soft_tissue = (-800 < self.volume) & (self.volume <= bone_threshold)
-        self.bone = bone_threshold < self.volume
+        self.register_buffer("air", self.volume <= -800, persistent=False)
+        soft_tissue = (-800 < self.volume) & (self.volume <= bone_threshold)
+        self.register_buffer("bone", bone_threshold < self.volume, persistent=False)
         self.bone_attenuation_multiplier = bone_attenuation_multiplier
 
         # 预先计算soft_tissue的最小值并注册为buffer
         # self.register_buffer("air", torch.where(self.volume <= -800))
         # self.register_buffer("soft_tissue", torch.where((-800 < self.volume) & (self.volume <= 350)))
         # self.register_buffer("bone", torch.where(350 < self.volume))
-        self.register_buffer("soft_tissue_min", self.volume[self.soft_tissue].min())
-
-        # 注册三个区域的布尔掩码为buffer
-        self.register_buffer("air_mask", self.air.float())
-        self.register_buffer("soft_tissue_mask", self.soft_tissue.float())
-        self.register_buffer("bone_mask", self.bone.float())
+        self.register_buffer("soft_tissue_min", self.volume[soft_tissue].min())
 
     def reshape_transform(self, img, batch_size):
         if self.reshape:
@@ -159,12 +154,18 @@ def forward(
 # %% ../notebooks/api/00_drr.ipynb 11
 @patch
 def set_bone_attenuation_multiplier(self: DRR, bone_attenuation_multiplier: float):
-    air_part = self.air_mask * self.soft_tissue_min
-    soft_part = self.soft_tissue_mask * self.volume
-    bone_part = self.bone_mask * (self.volume * bone_attenuation_multiplier)
-    self.density = air_part + soft_part + bone_part
-    self.density -= self.density.min()
-    self.density /= self.density.max()
+    # Rebuilding the former air/soft/bone tensors materialized four full CT
+    # volumes while the previous density was still alive. The SXH batch-8
+    # renderer then exhausted GPU memory when the contrast changed per batch.
+    # This is mathematically equivalent but keeps only one working volume.
+    if hasattr(self, "density"):
+        del self.density
+    density = self.volume.clone()
+    density.masked_fill_(self.air, self.soft_tissue_min)
+    density[self.bone] *= bone_attenuation_multiplier
+    density.sub_(density.min())
+    density.div_(density.max())
+    self.density = density
     self.bone_attenuation_multiplier = bone_attenuation_multiplier
 
     # print("计算花费了" + str(time.time() - start) + "秒")
