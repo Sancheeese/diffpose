@@ -1,0 +1,230 @@
+{
+  "checkpoint": "/home/zsr/project/diffpose/ours/xmr/case/sxh/runs/feature_common_comir_antishortcut/checkpoints/last.pt",
+  "checkpoint_step": 100000,
+  "device": "cuda:1",
+  "seed": 20260718,
+  "contrast_multiplier": 3.0,
+  "renderer": {
+    "registration": "automatic_ct_xray031_with_guidewire_refined_ct_mrcp",
+    "center_xray_index": 31,
+    "mrcp_projection_mode": "max",
+    "ct_nii": "/home/zsr/project/mrct/data/\u5b59\u65b0\u534e/CT/3.nii",
+    "refined_mrcp_nii": "/home/zsr/project/diffpose/ours/xmr/case/sxh/runs/refined_ct_mrcp_guidewire_xray031/mrcp_501_registered_to_ct_refined.nii.gz",
+    "refined_bile_duct_nii": "/home/zsr/project/diffpose/ours/xmr/case/sxh/runs/refined_ct_mrcp_guidewire_xray031/mr_bile_duct_registered_to_ct_refined.nii.gz",
+    "refined_ct_to_mr": "/home/zsr/project/diffpose/ours/xmr/case/sxh/runs/refined_ct_mrcp_guidewire_xray031/ct_to_mr_refined.txt",
+    "trusted_pose_euler_zyx_radians": [
+      [
+        -1.0315451622009277,
+        -0.017460009083151817,
+        1.8434423208236694
+      ]
+    ],
+    "trusted_pose_translation_mm": [
+      [
+        253.6473388671875,
+        59.54525375366211,
+        125.81620025634766
+      ]
+    ],
+    "offset_rotation_std_radians": [
+      0.39269908169872414,
+      0.3141592653589793,
+      0.2617993877991494
+    ],
+    "offset_translation_std_mm": [
+      30.0,
+      50.0,
+      30.0
+    ],
+    "ct_bone_attenuation_multiplier_uniform": [
+      0.5,
+      8.0
+    ],
+    "render_chunk_size": 1,
+    "normalization": "resize(256), per-image min-max, inversion, FOV radius=119, Normalize(0.3080, 0.1494)"
+  },
+  "poses": {
+    "A_trusted_global": {
+      "coordinate_frame": "global CT-to-X-ray",
+      "parameterization": "Euler ZYX rotation (radians) plus translation (mm)",
+      "rotation_euler_zyx_radians": [
+        [
+          -1.0315451622009277,
+          -0.017460009083151817,
+          1.8434423208236694
+        ]
+      ],
+      "translation_mm": [
+        [
+          253.6473388671875,
+          59.54525375366211,
+          125.81620025634766
+        ]
+      ],
+      "matrix": [
+        [
+          [
+            0.5134152770042419,
+            -0.8579626679420471,
+            0.017459122464060783,
+            0.0
+          ],
+          [
+            -0.23970192670822144,
+            -0.12384571135044098,
+            0.9629150032997131,
+            0.0
+          ],
+          [
+            -0.823982834815979,
+            -0.4985602796077728,
+            -0.2692395746707916,
+            0.0
+          ],
+          [
+            253.6473388671875,
+            59.54525375366211,
+            125.81620025634766,
+            1.0
+          ]
+        ]
+      ]
+    },
+    "B_centered_perturbation_global": {
+      "coordinate_frame": "global CT-to-X-ray",
+      "parameterization": "Euler ZYX rotation (radians) plus translation (mm)",
+      "rotation_euler_zyx_radians": [
+        [
+          -0.4941776990890503,
+          -0.2144932746887207,
+          1.6589313745498657
+        ]
+      ],
+      "translation_mm": [
+        [
+          268.322509765625,
+          110.0240707397461,
+          147.37274169921875
+        ]
+      ],
+      "matrix": [
+        [
+          [
+            0.8601850867271423,
+            -0.46343883872032166,
+            0.212852343916893,
+            0.0
+          ],
+          [
+            -0.22840818762779236,
+            0.02307562530040741,
+            0.9732919931411743,
+            0.0
+          ],
+          [
+            -0.45597293972969055,
+            -0.8858284950256348,
+            -0.08600394427776337,
+            0.0
+          ],
+          [
+            268.322509765625,
+            110.0240707397461,
+            147.37274169921875,
+            1.0
+          ]
+        ]
+      ]
+    },
+    "B_local_centered_offset": {
+      "coordinate_frame": "local-centred offset about the SXH specimen centre",
+      "parameterization": "Euler ZYX rotation (radians) plus translation (mm)",
+      "rotation_euler_zyx_radians": [
+        [
+          0.508798360824585,
+          0.0531776137650013,
+          -0.2636930048465729
+        ]
+      ],
+      "translation_mm": [
+        [
+          -2.808566093444824,
+          4.090035915374756,
+          10.911867141723633
+        ]
+      ],
+      "matrix": [
+        [
+          [
+            0.8720960021018982,
+            0.48643958568573,
+            -0.053152553737163544,
+            0.0
+          ],
+          [
+            -0.48238930106163025,
+            0.8363942503929138,
+            -0.26027923822402954,
+            0.0
+          ],
+          [
+            -0.08215363323688507,
+            0.25262871384620667,
+            0.9640693068504333,
+            0.0
+          ],
+          [
+            -2.808566093444824,
+            4.090035915374756,
+            10.911867141723633,
+            1.0
+          ]
+        ]
+      ]
+    }
+  },
+  "pairs": [
+    {
+      "name": "A/A",
+      "xray_pose": "A",
+      "mrcp_pose": "A",
+      "same_detector_coordinates": true,
+      "valid_fov_pixel_count": 65536,
+      "is_registration_metric": true,
+      "note": "Same-pose synthetic positive control.",
+      "corresponding_mean_cosine": 0.8110499382019043,
+      "corresponding_median_cosine": 0.8323703408241272,
+      "permuted_mean_cosine": 0.01825837418437004,
+      "permuted_median_cosine": -0.019131362438201904,
+      "corresponding_gt_permuted_fraction": 0.9791717529296875
+    },
+    {
+      "name": "B/B",
+      "xray_pose": "B",
+      "mrcp_pose": "B",
+      "same_detector_coordinates": true,
+      "valid_fov_pixel_count": 65536,
+      "is_registration_metric": true,
+      "note": "Same-pose synthetic positive control.",
+      "corresponding_mean_cosine": 0.7230969667434692,
+      "corresponding_median_cosine": 0.7414207458496094,
+      "permuted_mean_cosine": -0.0008035083301365376,
+      "permuted_median_cosine": -0.034692972898483276,
+      "corresponding_gt_permuted_fraction": 0.96527099609375
+    },
+    {
+      "name": "A/B",
+      "xray_pose": "A",
+      "mrcp_pose": "B",
+      "same_detector_coordinates": true,
+      "valid_fov_pixel_count": 65536,
+      "is_registration_metric": false,
+      "note": "A/B is a deliberate pose mismatch, not a registration metric.",
+      "corresponding_mean_cosine": 0.2890748679637909,
+      "corresponding_median_cosine": 0.32713043689727783,
+      "permuted_mean_cosine": 0.011401612311601639,
+      "permuted_median_cosine": -0.013064831495285034,
+      "corresponding_gt_permuted_fraction": 0.6999664306640625
+    }
+  ]
+}
