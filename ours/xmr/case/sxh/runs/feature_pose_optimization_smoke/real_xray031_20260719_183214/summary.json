@@ -1,0 +1,37 @@
+{
+  "output_dir": "diffpose/ours/xmr/case/sxh/runs/feature_pose_optimization_smoke/real_xray031_20260719_183214",
+  "mode": "real",
+  "checkpoint_step": 3,
+  "initial_loss": 0.9135208129882812,
+  "final_loss": 0.9135208129882812,
+  "best_loss": 0.9135208129882812,
+  "best_step": 1,
+  "final_rotation_delta_zyx_radians": [
+    -0.029999997466802597,
+    -0.029999997466802597,
+    -0.029999978840351105
+  ],
+  "final_translation_delta_mm": [
+    1.9999792575836182,
+    1.9999659061431885,
+    1.999976396560669
+  ],
+  "history_tail": [
+    {
+      "step": 1,
+      "loss": 0.9135208129882812,
+      "gradient_norm": 0.18079489469528198,
+      "rotation_delta_zyx_radians": [
+        -0.029999997466802597,
+        -0.029999997466802597,
+        -0.029999978840351105
+      ],
+      "translation_delta_mm": [
+        1.9999792575836182,
+        1.9999659061431885,
+        1.999976396560669
+      ],
+      "elapsed_seconds": 0.4806385952979326
+    }
+  ]
+}

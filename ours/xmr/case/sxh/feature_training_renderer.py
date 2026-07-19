@@ -6,6 +6,7 @@ import time
 from dataclasses import dataclass
 from pathlib import Path
 
+import numpy as np
 import torch
 from torch import Tensor
 
@@ -17,10 +18,32 @@ from ours.xmr.case.sxh.web_drr_server_nii_sxh_refined_mrcp import (
     DEFAULT_REFINED_CT_TO_MR,
     DEFAULT_REFINED_MRCP,
     DEFAULT_START_INDEX,
+    DEFAULT_GUIDEWIRE_OVERLAY,
     build_adjuster,
+    load_guidewire_chain_from_overlay,
     parse_args as parse_refined_server_args,
 )
+from ours.case.sxh.MRCP_dataset_nii import DEFAULT_MRCP_NII, IntubationDatasetMRCP
+from ours.utils.drr_mrcp import DRRMRCP
+from ours.xmr.case.sxh.web_drr_server_nii_sxh_centerline import (
+    DEFAULT_CENTERLINE_NII,
+    DEFAULT_GUIDEWIRE_DIR,
+    DEFAULT_OUTPUT_DIR as DEFAULT_CENTERLINE_OUTPUT_DIR,
+    DEFAULT_RUNS_MASK_DIR,
+    DRR,
+    DRRSeg,
+    DEFAULT_XRAY_ROOT,
+    IntubationDatasetMR,
+    SXHCenterlineWebPoseAdjuster,
+    SXH_DRR_PARAMS,
+    Transforms,
+    load_raw_centerline_graph_in_drr_coordinates,
+)
 from ours.xmr.feature_network.transformer import PerImageLegacyTransform
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[5]
+DEFAULT_ORIGINAL_CENTERLINE_MASK = PROJECT_ROOT / "mrct" / "data-duet" / "bile_duct" / "mrcp_006.nii.gz"
 
 
 @dataclass(frozen=True)
@@ -55,17 +78,24 @@ class SXHFeatureTrainingRenderer:
         projection_mode: str = "max",
         render_chunk_size: int = 2,
         device: str | None = None,
+        mrcp_registration: str = "refined",
     ) -> None:
-        if projection_mode != "max":
-            raise ValueError("The first common-feature training stage is defined only for MRCP max projection")
+        if projection_mode not in {"max", "sum"}:
+            raise ValueError(f"projection_mode must be 'max' or 'sum', got {projection_mode!r}")
+        if mrcp_registration not in {"refined", "original"}:
+            raise ValueError(f"mrcp_registration must be 'refined' or 'original', got {mrcp_registration!r}")
         if render_chunk_size <= 0:
             raise ValueError("render_chunk_size must be positive")
 
-        server_argv = ["--projection", projection_mode]
-        if device is not None:
-            server_argv.extend(["--device", device])
-        server_args = parse_refined_server_args(server_argv)
-        self.adjuster = build_adjuster(server_args)
+        self.mrcp_registration = mrcp_registration
+        if mrcp_registration == "refined":
+            server_argv = ["--projection", projection_mode]
+            if device is not None:
+                server_argv.extend(["--device", device])
+            server_args = parse_refined_server_args(server_argv)
+            self.adjuster = build_adjuster(server_args)
+        else:
+            self.adjuster = self._build_original_adjuster(projection_mode, device)
         self.device = torch.device(self.adjuster.device)
         if self.device.type != "cuda":
             raise RuntimeError("SXH feature training requires CUDA; run in the real GPU environment")
@@ -77,6 +107,63 @@ class SXHFeatureTrainingRenderer:
         self.normalizer = PerImageLegacyTransform(size=256, radius=119).to(self.device)
         self.contrast_distribution = torch.distributions.Uniform(0.5, 8.0)
         self.render_chunk_size = render_chunk_size
+        self.projection_mode = projection_mode
+
+    @staticmethod
+    def _build_original_adjuster(projection_mode: str, device: str | None):
+        resolved_device = device or ("cuda:0" if torch.cuda.is_available() else "cpu")
+        specimen = IntubationDatasetMR(DEFAULT_CT_NII, DEFAULT_XRAY_ROOT, **SXH_DRR_PARAMS)
+        centerline_path = DEFAULT_CENTERLINE_NII if DEFAULT_CENTERLINE_NII.is_file() else DEFAULT_ORIGINAL_CENTERLINE_MASK
+        vertices, edges = load_raw_centerline_graph_in_drr_coordinates(
+            centerline_path, tuple(specimen.volume.shape), specimen.spacing
+        )
+        height = 256
+        delx = specimen.delx * (512 / height)
+        drr = DRR(specimen.volume, specimen.spacing, sdr=specimen.sdr, height=height, delx=delx, reverse_x_axis=True).to(
+            resolved_device
+        )
+        drr_bone = DRRSeg(
+            specimen.mr_mask,
+            specimen.spacing,
+            sdr=specimen.sdr,
+            height=height,
+            delx=delx,
+            reverse_x_axis=True,
+        ).to(resolved_device)
+        mrcp_specimen = IntubationDatasetMRCP(DEFAULT_MRCP_NII, DEFAULT_XRAY_ROOT, **SXH_DRR_PARAMS)
+        drr_mrcp = DRRMRCP(
+            mrcp_specimen.volume,
+            mrcp_specimen.spacing,
+            sdr=mrcp_specimen.sdr,
+            height=height,
+            delx=delx,
+            reverse_x_axis=True,
+            projection_mode=projection_mode,
+        ).to(resolved_device)
+        adjuster = SXHCenterlineWebPoseAdjuster(
+            drr,
+            drr_bone,
+            specimen,
+            Transforms(height),
+            resolved_device,
+            centerline_vertices=vertices,
+            centerline_edges=edges,
+            guidewire_dir=DEFAULT_GUIDEWIRE_DIR,
+            init_pose_mode="registered",
+            runs_mask_dir=DEFAULT_RUNS_MASK_DIR,
+            output_dir=DEFAULT_CENTERLINE_OUTPUT_DIR,
+            projection_mode="centerline",
+        )
+        adjuster.drr_mrcp = drr_mrcp
+        trusted_guidewire = load_guidewire_chain_from_overlay(DEFAULT_GUIDEWIRE_OVERLAY).astype(np.float32)
+
+        def guidewire_points_for_index(index: int) -> np.ndarray:
+            if index != DEFAULT_START_INDEX:
+                return np.empty((0, 2), dtype=np.float32)
+            return trusted_guidewire
+
+        adjuster.guidewire_points_for_index = guidewire_points_for_index
+        return adjuster
 
     def _synchronize(self) -> None:
         if self.device.type == "cuda":
@@ -85,8 +172,9 @@ class SXHFeatureTrainingRenderer:
     def metadata(self) -> dict[str, object]:
         return {
             "registration": "automatic_ct_xray031_with_guidewire_refined_ct_mrcp",
+            "mrcp_registration": self.mrcp_registration,
             "center_xray_index": DEFAULT_START_INDEX,
-            "mrcp_projection_mode": "max",
+            "mrcp_projection_mode": self.projection_mode,
             "ct_nii": str(DEFAULT_CT_NII),
             "refined_mrcp_nii": str(DEFAULT_REFINED_MRCP),
             "refined_bile_duct_nii": str(DEFAULT_REFINED_BILE_DUCT),

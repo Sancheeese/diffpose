@@ -1,0 +1,53 @@
+{
+  "output_dir": "diffpose/ours/xmr/case/sxh/runs/feature_pose_optimization_smoke/real_xray031_20260719_182623",
+  "mode": "real",
+  "checkpoint_step": 3,
+  "initial_loss": 0.9135208129882812,
+  "final_loss": 0.9068093299865723,
+  "best_loss": 0.9068093299865723,
+  "best_step": 2,
+  "final_rotation_delta_zyx_radians": [
+    -0.05996931716799736,
+    -0.044581107795238495,
+    -0.021122479811310768
+  ],
+  "final_translation_delta_mm": [
+    3.944913387298584,
+    3.969651937484741,
+    3.53790283203125
+  ],
+  "history_tail": [
+    {
+      "step": 1,
+      "loss": 0.9135208129882812,
+      "gradient_norm": 0.18080374598503113,
+      "rotation_delta_zyx_radians": [
+        -0.029999995604157448,
+        -0.029999997466802597,
+        -0.029999980702996254
+      ],
+      "translation_delta_mm": [
+        1.9999791383743286,
+        1.9999659061431885,
+        1.999976396560669
+      ],
+      "elapsed_seconds": 0.5263133961707354
+    },
+    {
+      "step": 2,
+      "loss": 0.9068093299865723,
+      "gradient_norm": 0.12779752910137177,
+      "rotation_delta_zyx_radians": [
+        -0.05996931716799736,
+        -0.044581107795238495,
+        -0.021122479811310768
+      ],
+      "translation_delta_mm": [
+        3.944913387298584,
+        3.969651937484741,
+        3.53790283203125
+      ],
+      "elapsed_seconds": 0.5932946335524321
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "checkpoint_step": 100000.0,
+  "mrcp_registration": "original",
+  "real_xray_invert": true,
+  "full_cosine_virtual_mrcp": 0.48843103647232056,
+  "full_cosine_real_mrcp": 0.367307186126709,
+  "full_cosine_real_virtual": 0.5904694199562073,
+  "pixel_cosine_virtual_mrcp_mean": 0.48843103647232056,
+  "pixel_cosine_real_mrcp_mean": 0.367307186126709,
+  "pixel_cosine_real_virtual_mean": 0.5904694199562073,
+  "pixel_cosine_virtual_mrcp_p95": 0.9119447469711304,
+  "pixel_cosine_real_mrcp_p95": 0.8087171912193298,
+  "pixel_cosine_real_virtual_p95": 0.9262715578079224
+}

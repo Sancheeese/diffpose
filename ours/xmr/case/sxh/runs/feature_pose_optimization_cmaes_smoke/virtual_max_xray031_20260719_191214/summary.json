@@ -1,0 +1,116 @@
+{
+  "output_dir": "diffpose/ours/xmr/case/sxh/runs/feature_pose_optimization_cmaes_smoke/virtual_max_xray031_20260719_191214",
+  "mode": "virtual",
+  "projection": "max",
+  "checkpoint_step": 100000,
+  "initial_loss": 0.1895662546157837,
+  "best_loss": 0.1881827712059021,
+  "best_eval_index": 4,
+  "best_rotation_delta_zyx_radians": [
+    0.049118371712908004,
+    -0.05505384028566458,
+    -0.059253313898010695
+  ],
+  "best_translation_delta_mm": [
+    -1.028275203671464,
+    7.430989470893699,
+    1.183630653050996
+  ],
+  "evaluations": 20,
+  "iterations": 1,
+  "stop": {
+    "maxiter": 1
+  },
+  "history_tail": [
+    {
+      "eval_index": 16,
+      "iteration": 1,
+      "candidate_index": 15,
+      "loss": 0.2137129306793213,
+      "is_best": false,
+      "rotation_delta_zyx_radians": [
+        -0.02955393692429377,
+        -0.02582108356422351,
+        -0.04800060901484437
+      ],
+      "translation_delta_mm": [
+        1.886523333059795,
+        -2.8736378887967047,
+        -0.5472944728643357
+      ],
+      "elapsed_seconds": 0.45593097247183323
+    },
+    {
+      "eval_index": 17,
+      "iteration": 1,
+      "candidate_index": 16,
+      "loss": 0.3269343376159668,
+      "is_best": false,
+      "rotation_delta_zyx_radians": [
+        0.03395357999127535,
+        -0.04277221486663281,
+        -0.015010553899791078
+      ],
+      "translation_delta_mm": [
+        10.791016482324487,
+        4.371574329768302,
+        -6.467952652021625
+      ],
+      "elapsed_seconds": 0.4842985849827528
+    },
+    {
+      "eval_index": 18,
+      "iteration": 1,
+      "candidate_index": 17,
+      "loss": 0.2006043791770935,
+      "is_best": false,
+      "rotation_delta_zyx_radians": [
+        -0.003987046909278585,
+        0.028224511118009155,
+        0.06167458012376068
+      ],
+      "translation_delta_mm": [
+        0.7449505969370827,
+        -2.6529991536067703,
+        -3.6527854146881533
+      ],
+      "elapsed_seconds": 0.5124188866466284
+    },
+    {
+      "eval_index": 19,
+      "iteration": 1,
+      "candidate_index": 18,
+      "loss": 0.23831331729888916,
+      "is_best": false,
+      "rotation_delta_zyx_radians": [
+        0.032253099249195456,
+        0.015653149143571344,
+        -0.025832826783432673
+      ],
+      "translation_delta_mm": [
+        -0.9453819664322954,
+        -2.0810594431427134,
+        3.6234392646879754
+      ],
+      "elapsed_seconds": 0.5405346043407917
+    },
+    {
+      "eval_index": 20,
+      "iteration": 1,
+      "candidate_index": 19,
+      "loss": 0.25356829166412354,
+      "is_best": false,
+      "rotation_delta_zyx_radians": [
+        -0.03449803386569329,
+        0.024320926436973256,
+        0.04257665712927418
+      ],
+      "translation_delta_mm": [
+        2.4313074124670906,
+        -4.171338295651395,
+        6.725242495710708
+      ],
+      "elapsed_seconds": 0.568183115683496
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "output_dir": "diffpose/ours/xmr/case/sxh/runs/feature_pose_optimization_cmaes/virtual_max_xray031_20260719_191319",
+  "mode": "virtual",
+  "projection": "max",
+  "checkpoint_step": 100000,
+  "initial_loss": 0.1895662546157837,
+  "best_loss": 0.17792075872421265,
+  "best_eval_index": 1189,
+  "best_rotation_delta_zyx_radians": [
+    0.0012614265131256743,
+    -0.04834705315998121,
+    -0.009998129141259348
+  ],
+  "best_translation_delta_mm": [
+    -2.2033196944641853,
+    3.279523206526119,
+    -1.4666425484326806
+  ],
+  "evaluations": 1200,
+  "iterations": 60,
+  "stop": {
+    "maxiter": 60
+  },
+  "history_tail": [
+    {
+      "eval_index": 1196,
+      "iteration": 60,
+      "candidate_index": 15,
+      "loss": 0.17855685949325562,
+      "is_best": false,
+      "rotation_delta_zyx_radians": [
+        0.0004669839730851986,
+        -0.04876373051010471,
+        -0.009055614244137889
+      ],
+      "translation_delta_mm": [
+        -2.2855886856974803,
+        3.3753996324919973,
+        -1.5301420048683068
+      ],
+      "elapsed_seconds": 33.70710840728134
+    },
+    {
+      "eval_index": 1197,
+      "iteration": 60,
+      "candidate_index": 16,
+      "loss": 0.17879217863082886,
+      "is_best": false,
+      "rotation_delta_zyx_radians": [
+        0.001358704800557794,
+        -0.048080681339492844,
+        -0.00940209614452515
+      ],
+      "translation_delta_mm": [
+        -2.284201146473701,
+        3.4557607404814443,
+        -1.540981048779948
+      ],
+      "elapsed_seconds": 33.7350807050243
+    },
+    {
+      "eval_index": 1198,
+      "iteration": 60,
+      "candidate_index": 17,
+      "loss": 0.1784888505935669,
+      "is_best": false,
+      "rotation_delta_zyx_radians": [
+        0.0005108883258828816,
+        -0.04863727715950787,
+        -0.009185452254232467
+      ],
+      "translation_delta_mm": [
+        -2.2576150668561774,
+        3.343002746684876,
+        -1.513909504359481
+      ],
+      "elapsed_seconds": 33.762907597236335
+    },
+    {
+      "eval_index": 1199,
+      "iteration": 60,
+      "candidate_index": 18,
+      "loss": 0.17857801914215088,
+      "is_best": false,
+      "rotation_delta_zyx_radians": [
+        0.0011728171613822336,
+        -0.04821513435718501,
+        -0.010199657763996126
+      ],
+      "translation_delta_mm": [
+        -2.142853541893956,
+        3.1563279789268663,
+        -1.4314440709749707
+      ],
+      "elapsed_seconds": 33.79091548267752
+    },
+    {
+      "eval_index": 1200,
+      "iteration": 60,
+      "candidate_index": 19,
+      "loss": 0.17907392978668213,
+      "is_best": false,
+      "rotation_delta_zyx_radians": [
+        0.0009594705534158445,
+        -0.04888979708267685,
+        -0.01059734134415158
+      ],
+      "translation_delta_mm": [
+        -2.2203407000037165,
+        3.288930600493304,
+        -1.4234446761689492
+      ],
+      "elapsed_seconds": 33.819102982990444
+    }
+  ]
+}
