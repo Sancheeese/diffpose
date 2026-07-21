@@ -1,6 +1,6 @@
 {
   "training": {
-    "steps": 3,
+    "steps": 100000,
     "batch_size": 8,
     "patch_pairs_per_image": 24,
     "render_chunk_size": 2,
@@ -16,10 +16,10 @@
     "checkpoint_interval": 1000,
     "log_interval": 10,
     "seed": 20260718,
-    "device": "cuda:0",
-    "output_dir": "/data/zsr/project/diffpose/ours/xmr/case/sxh/runs/feature_common_comir_antishortcut_sum_mrcp_inverted",
+    "device": "cuda:1",
+    "output_dir": "/home/zsr/project/diffpose/ours/xmr/case/sxh/runs/feature_common_comir_antishortcut_sum_mrcp_inverted",
     "resume": null,
-    "smoke": true,
+    "smoke": false,
     "mrcp_intensity_variant": "black_white_inverted_in_legacy_unit_intensity_space",
     "mrcp_projection_mode": "sum",
     "positive_patches_per_query": 1,
@@ -30,10 +30,10 @@
     "mrcp_registration": "refined",
     "center_xray_index": 31,
     "mrcp_projection_mode": "sum",
-    "ct_nii": "/data/zsr/project/mrct/data/\u5b59\u65b0\u534e/CT/3.nii",
-    "refined_mrcp_nii": "/data/zsr/project/diffpose/ours/xmr/case/sxh/runs/refined_ct_mrcp_guidewire_xray031/mrcp_501_registered_to_ct_refined.nii.gz",
-    "refined_bile_duct_nii": "/data/zsr/project/diffpose/ours/xmr/case/sxh/runs/refined_ct_mrcp_guidewire_xray031/mr_bile_duct_registered_to_ct_refined.nii.gz",
-    "refined_ct_to_mr": "/data/zsr/project/diffpose/ours/xmr/case/sxh/runs/refined_ct_mrcp_guidewire_xray031/ct_to_mr_refined.txt",
+    "ct_nii": "/home/zsr/project/mrct/data/\u5b59\u65b0\u534e/CT/3.nii",
+    "refined_mrcp_nii": "/home/zsr/project/diffpose/ours/xmr/case/sxh/runs/refined_ct_mrcp_guidewire_xray031/mrcp_501_registered_to_ct_refined.nii.gz",
+    "refined_bile_duct_nii": "/home/zsr/project/diffpose/ours/xmr/case/sxh/runs/refined_ct_mrcp_guidewire_xray031/mr_bile_duct_registered_to_ct_refined.nii.gz",
+    "refined_ct_to_mr": "/home/zsr/project/diffpose/ours/xmr/case/sxh/runs/refined_ct_mrcp_guidewire_xray031/ct_to_mr_refined.txt",
     "trusted_pose_euler_zyx_radians": [
       [
         -1.0315451622009277,
