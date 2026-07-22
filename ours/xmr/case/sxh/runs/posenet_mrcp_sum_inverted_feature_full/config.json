@@ -1,0 +1,71 @@
+{
+  "training": {
+    "feature_checkpoint": "/data/zsr/project/diffpose/ours/xmr/case/sxh/runs/feature_common_comir_antishortcut_sum_mrcp_inverted/checkpoints/last.pt",
+    "feature_checkpoint_step": 100000,
+    "guidewire_result": "/data/zsr/project/diffpose/ours/xmr/case/sxh/outputs/guidewire_registration/xray031/result.json",
+    "output_dir": "diffpose/ours/xmr/case/sxh/runs/posenet_mrcp_sum_inverted_feature_full",
+    "mrcp_registration": "original",
+    "device": "cuda:0",
+    "height": 256,
+    "model_name": "resnet18",
+    "parameterization": "se3_log_map",
+    "convention": null,
+    "batch_size": 8,
+    "n_epochs": 800,
+    "n_batches_per_epoch": 100,
+    "learning_rate": 0.005,
+    "accumulate_step": 1,
+    "render_chunk_size": 2,
+    "checkpoint_interval": 50,
+    "seed": 20260722,
+    "feature_contrast_range": [
+      0.8,
+      1.2
+    ],
+    "feature_noise_std_range": [
+      0.0,
+      0.03
+    ],
+    "loss": "1 - MS-NCC(pred_mrcp_sum_inverted, target_mrcp_sum_inverted) + 1e-2 * (GeodesicSE3 + DoubleGeodesic)"
+  },
+  "renderer": {
+    "registration": "automatic_ct_xray031_with_guidewire_refined_ct_mrcp",
+    "mrcp_registration": "original",
+    "center_xray_index": 31,
+    "mrcp_projection_mode": "sum",
+    "ct_nii": "/data/zsr/project/mrct/data/\u5b59\u65b0\u534e/CT/3.nii",
+    "refined_mrcp_nii": "/data/zsr/project/diffpose/ours/xmr/case/sxh/runs/refined_ct_mrcp_guidewire_xray031/mrcp_501_registered_to_ct_refined.nii.gz",
+    "refined_bile_duct_nii": "/data/zsr/project/diffpose/ours/xmr/case/sxh/runs/refined_ct_mrcp_guidewire_xray031/mr_bile_duct_registered_to_ct_refined.nii.gz",
+    "refined_ct_to_mr": "/data/zsr/project/diffpose/ours/xmr/case/sxh/runs/refined_ct_mrcp_guidewire_xray031/ct_to_mr_refined.txt",
+    "trusted_pose_euler_zyx_radians": [
+      [
+        -1.0315451622009277,
+        -0.017460009083151817,
+        1.8434423208236694
+      ]
+    ],
+    "trusted_pose_translation_mm": [
+      [
+        253.6473388671875,
+        59.54525375366211,
+        125.81620025634766
+      ]
+    ],
+    "offset_rotation_std_radians": [
+      0.39269908169872414,
+      0.3141592653589793,
+      0.2617993877991494
+    ],
+    "offset_translation_std_mm": [
+      30.0,
+      50.0,
+      30.0
+    ],
+    "ct_bone_attenuation_multiplier_uniform": [
+      0.5,
+      8.0
+    ],
+    "render_chunk_size": 2,
+    "normalization": "resize(256), per-image min-max, inversion, FOV radius=119, Normalize(0.3080, 0.1494)"
+  }
+}

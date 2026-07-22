@@ -1,0 +1,17 @@
+{
+  "output_dir": "/data/zsr/project/diffpose/ours/xmr/case/sxh/runs/feature_pose_optimization_sum_inverted_gradient/virtual_sum_inverted_xray031_20260722_013327",
+  "checkpoint_step": 100000,
+  "initial_loss": 0.4677823781967163,
+  "best_loss": 0.2199881672859192,
+  "best_step": 231,
+  "best_rotation_delta_zyx_radians": [
+    0.0019119544886052608,
+    0.1839912384748459,
+    0.16022136807441711
+  ],
+  "best_translation_delta_mm": [
+    -0.03909014165401459,
+    5.994277000427246,
+    24.855144500732422
+  ]
+}

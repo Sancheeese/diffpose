@@ -1,0 +1,58 @@
+{
+  "optimizer": {
+    "mode": "real",
+    "index": 31,
+    "checkpoint": "/data/zsr/project/diffpose/ours/xmr/case/sxh/runs/feature_common_comir_antishortcut_sum_mrcp_inverted/checkpoints/last.pt",
+    "output_dir": "/data/zsr/project/diffpose/ours/xmr/case/sxh/runs/feature_pose_optimization_sum_inverted_gradient/real_sum_inverted_xray031_20260722_012101",
+    "device": "cuda:0",
+    "steps": 300,
+    "rotation_lr": 0.01,
+    "translation_lr": 1.0,
+    "gradient_clip": 10.0,
+    "contrast_multiplier": 3.0,
+    "mrcp_registration": "refined",
+    "real_xray_invert": true,
+    "loss": "1 - cosine(flatten(xray_feature[32,256,256]), flatten(mrcp_feature[32,256,256]))"
+  },
+  "checkpoint_step": 100000,
+  "renderer": {
+    "registration": "automatic_ct_xray031_with_guidewire_refined_ct_mrcp",
+    "mrcp_registration": "refined",
+    "center_xray_index": 31,
+    "mrcp_projection_mode": "sum",
+    "ct_nii": "/data/zsr/project/mrct/data/\u5b59\u65b0\u534e/CT/3.nii",
+    "refined_mrcp_nii": "/data/zsr/project/diffpose/ours/xmr/case/sxh/runs/refined_ct_mrcp_guidewire_xray031/mrcp_501_registered_to_ct_refined.nii.gz",
+    "refined_bile_duct_nii": "/data/zsr/project/diffpose/ours/xmr/case/sxh/runs/refined_ct_mrcp_guidewire_xray031/mr_bile_duct_registered_to_ct_refined.nii.gz",
+    "refined_ct_to_mr": "/data/zsr/project/diffpose/ours/xmr/case/sxh/runs/refined_ct_mrcp_guidewire_xray031/ct_to_mr_refined.txt",
+    "trusted_pose_euler_zyx_radians": [
+      [
+        -1.0315451622009277,
+        -0.017460009083151817,
+        1.8434423208236694
+      ]
+    ],
+    "trusted_pose_translation_mm": [
+      [
+        253.6473388671875,
+        59.54525375366211,
+        125.81620025634766
+      ]
+    ],
+    "offset_rotation_std_radians": [
+      0.39269908169872414,
+      0.3141592653589793,
+      0.2617993877991494
+    ],
+    "offset_translation_std_mm": [
+      30.0,
+      50.0,
+      30.0
+    ],
+    "ct_bone_attenuation_multiplier_uniform": [
+      0.5,
+      8.0
+    ],
+    "render_chunk_size": 1,
+    "normalization": "resize(256), per-image min-max, inversion, FOV radius=119, Normalize(0.3080, 0.1494)"
+  }
+}
